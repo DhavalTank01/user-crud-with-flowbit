@@ -6,6 +6,7 @@ function App() {
       <h1 className="text-2xl dark:text-white">
         Flowbite React + Create React App
       </h1>
+      <h1>Hello World</h1>
       <DarkThemeToggle />
     </main>
   );
