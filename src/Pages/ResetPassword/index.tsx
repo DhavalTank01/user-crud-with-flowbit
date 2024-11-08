@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-import URLS from "../../Routes";
 import Input from "../../Components/Input";
 import CustomButton from "../../Components/Button";
 
