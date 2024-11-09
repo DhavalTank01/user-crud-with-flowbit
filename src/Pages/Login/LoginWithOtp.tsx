@@ -198,9 +198,6 @@ const LoginWithOtp = () => {
           <Link to={URLS.Login}>Remember password?</Link>
           <Link to={URLS.ForgotPassword}>Loss password?</Link>
         </div>
-        <div className="text-end">
-          <Link to={URLS.SignUp}>Don't have an account?</Link>
-        </div>
       </form>
     </div>
   );

@@ -98,9 +98,6 @@ const Login = () => {
           <Link to={URLS.LoginWithOtp}>Login with OTP?</Link>
           <Link to={URLS.ForgotPassword}>Loss password?</Link>
         </div>
-        <div className="text-end">
-          <Link to={URLS.SignUp}>Don't have an account?</Link>
-        </div>
       </form>
     </div>
   );
