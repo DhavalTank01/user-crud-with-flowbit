@@ -4,7 +4,7 @@ const URLS = {
   Dashboard: "/dashboard",
   LoginWithOtp: "/login-with-otp",
   ForgotPassword: "/forgot-password",
-  ResetPassword: "/reset-password",
+  ResetPassword: "/reset-password/:token",
 };
 
 export default URLS;

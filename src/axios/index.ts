@@ -17,12 +17,14 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error: any) => {
-    console.error("Error in axios interceptor response ", error);
     if (error?.response?.status === 401) {
       if (
-        [APIS.LOGIN, APIS.SEND_OTP, APIS.LOGIN_WITH_OTP].includes(
-          error?.response?.config?.url,
-        )
+        [
+          APIS.LOGIN,
+          APIS.SEND_OTP,
+          APIS.LOGIN_WITH_OTP,
+          APIS.FORGOT_PASSWORD,
+        ].includes(error?.response?.config?.url)
       ) {
         return Promise.resolve(error.response);
       } else {
@@ -46,7 +48,6 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error: any) => {
-    console.error("Error in axios interceptor request ", error);
     return Promise.reject(error);
   },
 );

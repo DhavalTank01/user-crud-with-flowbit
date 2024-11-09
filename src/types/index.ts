@@ -3,6 +3,7 @@ type CaseType =
   | "lowercase"
   | "titlecase"
   | "capitalize"
-  | "firstLetter";
+  | "firstLetter"
+  | "errorMessage";
 
 export type { CaseType };

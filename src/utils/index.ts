@@ -50,8 +50,11 @@ const getFullName = (user: User): string => {
   return convertTextCase(`${user?.first_name} ${user?.last_name}`, "titlecase");
 };
 
-const convertTextCase = (text: string, caseType: CaseType): string => {
-  if (!text) return "-";
+const convertTextCase = (
+  text: string | undefined,
+  caseType: CaseType,
+): string => {
+  if (!text) return "";
   switch (caseType) {
     case "uppercase":
       return text.toUpperCase();
@@ -65,6 +68,13 @@ const convertTextCase = (text: string, caseType: CaseType): string => {
         .join(" ");
     case "capitalize":
       return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    case "errorMessage":
+      return text
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
+        .toLowerCase()
+        .replace(/^\w/, (match) => match.toUpperCase());
+
     default:
       return text;
   }
