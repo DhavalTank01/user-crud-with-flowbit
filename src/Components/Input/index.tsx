@@ -1,5 +1,5 @@
 import { Label, TextInput } from "flowbite-react";
-import React, { ChangeEvent } from "react";
+import React from "react";
 
 interface InputPropsTypes {
   type?: string;
@@ -8,8 +8,8 @@ interface InputPropsTypes {
   value?: string;
   label?: string;
   placeholder?: string;
-  onChange?: (e: ChangeEvent<Element>) => void;
-  onBlur?: (e: ChangeEvent<Element>) => void;
+  onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
+  onBlur?: React.ChangeEventHandler<HTMLInputElement> | undefined;
   disabled?: boolean;
   required?: boolean;
   error?: boolean;

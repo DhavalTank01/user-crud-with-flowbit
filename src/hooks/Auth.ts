@@ -9,8 +9,8 @@ const useAuth = () => {
   };
 
   const isAuthenticated = () => {
-    const { token } = getUserAndToken();
-    return !!token;
+    const data = getUserAndToken();
+    return !!data?.token && !!data?.user;
   };
 
   const isAccessToPage = () => {

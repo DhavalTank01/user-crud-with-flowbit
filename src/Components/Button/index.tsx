@@ -6,6 +6,7 @@ interface CustomButtonPropsTypes {
   type?: "button" | "submit" | "reset" | undefined;
   disabled?: boolean;
   isLoading?: boolean;
+  onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 }
 
 const CustomButton = ({
@@ -13,9 +14,16 @@ const CustomButton = ({
   type = "submit",
   disabled = false,
   isLoading = false,
+  onClick,
+  ...rest
 }: CustomButtonPropsTypes) => {
   return (
-    <Button type={type} disabled={disabled || isLoading}>
+    <Button
+      type={type}
+      disabled={disabled || isLoading}
+      onClick={onClick}
+      {...rest}
+    >
       {isLoading ? (
         <div className="flex items-center gap-3">
           <Spinner />

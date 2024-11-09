@@ -1,41 +1,26 @@
+import { useState, useEffect } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import Login from "./Pages/Login";
+import DashBoard from "./Pages/Dashboard";
 import URLS from "./Routes";
 import SignUp from "./Pages/SignUp";
-import DashBoard from "./Pages/Dashboard";
-import useAuth from "./hooks/Auth";
-import LoginWithOtp from "./Pages/Login/LoginWithOtp";
-import ForgotPassword from "./Pages/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword";
-import { useDispatch } from "react-redux";
-import secureLocalStorage from "react-secure-storage";
-import { getCookie } from "./utils";
+import ForgotPassword from "./Pages/ForgotPassword";
+import LoginWithOtp from "./Pages/Login/LoginWithOtp";
+import Login from "./Pages/Login";
+import toast from "react-hot-toast";
+import { login } from "./redux/slice/userSlice";
 import axiosInstance from "./axios";
 import { APIS } from "./axios/apis";
-import { login } from "./redux/slice/userSlice";
-import { useEffect } from "react";
-import toast from "react-hot-toast";
+import { getCookie } from "./utils";
+import secureLocalStorage from "react-secure-storage";
+import useAuth from "./hooks/Auth";
+import { useDispatch } from "react-redux";
 
-function App() {
+const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const PrivateRoute = ({ children }: { children: JSX.Element }) => {
-    const { isAuthenticated } = useAuth();
-    if (isAuthenticated()) {
-      return children;
-    } else {
-      return <Navigate to={URLS.Login} replace />;
-    }
-  };
-
-  const PublicRoute = ({ children }: { children: JSX.Element }) => {
-    const { isAuthenticated } = useAuth();
-    if (!isAuthenticated()) {
-      return children;
-    } else {
-      return <Navigate to={URLS.Dashboard} replace />;
-    }
-  };
+  const { isAuthenticated } = useAuth();
+  const [loading, setLoading] = useState(true);
 
   const restoreSessionIfClearLocalStorage = async () => {
     try {
@@ -49,24 +34,34 @@ function App() {
             let token = response?.data?.user?.token;
             dispatch(login({ user, token }));
             navigate(URLS.Dashboard);
-          } else {
-            navigate(URLS.Login);
           }
-        } else {
-          navigate(URLS.Login);
         }
-      } else {
-        navigate(URLS.Dashboard);
       }
     } catch (error: any) {
       console.error(error);
       toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     restoreSessionIfClearLocalStorage();
   }, []);
+
+  if (loading) return <div>Loading...</div>;
+
+  const PrivateRoute = ({ children }: { children: JSX.Element }) => {
+    return isAuthenticated() ? children : <Navigate to={URLS.Login} replace />;
+  };
+
+  const PublicRoute = ({ children }: { children: JSX.Element }) => {
+    return !isAuthenticated() ? (
+      children
+    ) : (
+      <Navigate to={URLS.Dashboard} replace />
+    );
+  };
 
   return (
     <Routes>
@@ -138,6 +133,6 @@ function App() {
       />
     </Routes>
   );
-}
+};
 
 export default App;
