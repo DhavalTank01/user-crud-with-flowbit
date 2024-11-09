@@ -37,10 +37,9 @@ const DashBoard = () => {
     }
   };
   return (
-    <div>
+    <div className="h-screen">
       <h1>Dashboard</h1>
       <div>Hello {getFullName(user)}</div>
-      <Button onClick={handleLogoutClick}>Logout</Button>
     </div>
   );
 };

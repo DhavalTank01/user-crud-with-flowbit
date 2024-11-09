@@ -74,6 +74,11 @@ const convertTextCase = (
         .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
         .toLowerCase()
         .replace(/^\w/, (match) => match.toUpperCase());
+    case "initialLetters":
+      return text
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase())
+        .join("");
 
     default:
       return text;

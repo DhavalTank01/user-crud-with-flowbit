@@ -15,6 +15,10 @@ import { getCookie } from "./utils";
 import secureLocalStorage from "react-secure-storage";
 import useAuth from "./hooks/Auth";
 import { useDispatch } from "react-redux";
+import MyProfile from "./Pages/Settings/Profile";
+import ChangePassword from "./Pages/Settings/ChangePassword";
+import PrivacyPolicy from "./Pages/PrivacyPolicy";
+import TermsAndConditions from "./Pages/TermsAndConditions";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -106,12 +110,30 @@ const App = () => {
           </PublicRoute>
         }
       />
+      <Route path={URLS.PrivacyPolicy} element={<PrivacyPolicy />} />
+      <Route path={URLS.TermsAndConditions} element={<TermsAndConditions />} />
       {/* private routes */}
       <Route
         path={URLS.Dashboard}
         element={
           <PrivateRoute>
             <DashBoard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path={URLS.Profile}
+        element={
+          <PrivateRoute>
+            <MyProfile />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path={URLS.ChangePassword}
+        element={
+          <PrivateRoute>
+            <ChangePassword />
           </PrivateRoute>
         }
       />

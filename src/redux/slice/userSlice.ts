@@ -7,6 +7,7 @@ import { clearAllCookies, setCookie } from "../../utils";
 
 const initialState: AuthState = {
   user: (secureLocalStorage.getItem("user") as User) || null,
+  isAuthenticated: !!(secureLocalStorage.getItem("user") as User),
 };
 
 const authSlice = createSlice({
@@ -17,6 +18,7 @@ const authSlice = createSlice({
       if (action.payload?.user) {
         state.user = action.payload?.user;
         secureLocalStorage.setItem("user", action.payload?.user);
+        state.isAuthenticated = true;
       }
       if (action.payload?.token) {
         secureLocalStorage.setItem("token", action.payload?.token);
@@ -29,6 +31,7 @@ const authSlice = createSlice({
       state.user = null;
       secureLocalStorage.clear();
       clearAllCookies();
+      state.isAuthenticated = false;
     },
   },
 });

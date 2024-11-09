@@ -5,6 +5,10 @@ const URLS = {
   LoginWithOtp: "/login-with-otp",
   ForgotPassword: "/forgot-password",
   ResetPassword: "/reset-password/:token",
+  ChangePassword: "/settings/change-password",
+  Profile: "/settings/profile",
+  PrivacyPolicy: "/privacy-policy",
+  TermsAndConditions: "/terms-and-conditions",
 };
 
 export default URLS;

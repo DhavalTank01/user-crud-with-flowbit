@@ -4,6 +4,7 @@ type CaseType =
   | "titlecase"
   | "capitalize"
   | "firstLetter"
-  | "errorMessage";
+  | "errorMessage"
+  | "initialLetters";
 
 export type { CaseType };

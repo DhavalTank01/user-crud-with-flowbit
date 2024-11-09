@@ -8,6 +8,7 @@ export interface User {
 
 export interface AuthState {
   user: User | null | undefined;
+  isAuthenticated: boolean;
 }
 
 export interface UserSetAction {
