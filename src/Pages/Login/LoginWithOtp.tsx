@@ -14,7 +14,7 @@ const LoginWithOtp = () => {
     email: "test1@yopmail.com",
     otp: "",
   };
-  const timerValue = 10;
+  const timerValue = 120;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [email, setEmail] = useState(initialValues.email);
@@ -26,6 +26,10 @@ const LoginWithOtp = () => {
     resendOtp: false,
   });
   const [timer, setTimer] = useState(timerValue);
+  const [errors, setErrors] = useState({
+    email: "",
+    otp: "",
+  });
 
   const startTimer = () => {
     let interval = setInterval(() => {
@@ -99,10 +103,36 @@ const LoginWithOtp = () => {
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
+    if (e.target.value) {
+      setErrors({ ...errors, email: "" });
+    } else {
+      setErrors({ ...errors, email: "Email is required" });
+    }
   };
 
   const handleOtpChange = (e: ChangeEvent<HTMLInputElement>) => {
     setOtp(e.target.value);
+    if (e.target.value) {
+      setErrors({ ...errors, otp: "" });
+    } else {
+      setErrors({ ...errors, otp: "OTP is required" });
+    }
+  };
+
+  const handleEmailBlur = () => {
+    if (!email) {
+      setErrors({ ...errors, email: "Email is required" });
+    } else {
+      setErrors({ ...errors, email: "" });
+    }
+  };
+
+  const handleOtpBlur = () => {
+    if (!otp) {
+      setErrors({ ...errors, otp: "OTP is required" });
+    } else {
+      setErrors({ ...errors, otp: "" });
+    }
   };
 
   const handleSubmit = (e: SyntheticEvent) => {
@@ -127,6 +157,9 @@ const LoginWithOtp = () => {
           value={email}
           onChange={handleEmailChange}
           disabled={isSendOtp}
+          onBlur={handleEmailBlur}
+          error={!!errors.email}
+          helperText={errors.email}
         />
         {isSendOtp ? (
           <Input
@@ -137,11 +170,15 @@ const LoginWithOtp = () => {
             placeholder="OTP"
             value={otp}
             onChange={handleOtpChange}
+            onBlur={handleOtpBlur}
+            error={!!errors.otp}
+            helperText={errors.otp}
           />
         ) : null}
         <CustomButton
           type="submit"
           isLoading={isLoading.sendingOtp || isLoading.login}
+          disabled={isSendOtp ? !otp : !email}
         >
           {isSendOtp ? "Login" : "Send OTP"}
         </CustomButton>

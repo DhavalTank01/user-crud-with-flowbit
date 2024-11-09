@@ -19,7 +19,11 @@ axiosInstance.interceptors.response.use(
   (error: any) => {
     console.error("Error in axios interceptor response ", error);
     if (error?.response?.status === 401) {
-      if ([APIS.LOGIN].includes(error?.response?.config?.url)) {
+      if (
+        [APIS.LOGIN, APIS.SEND_OTP, APIS.LOGIN_WITH_OTP].includes(
+          error?.response?.config?.url,
+        )
+      ) {
         return Promise.resolve(error.response);
       } else {
         toast.error(error?.response?.data?.message || "Something went wrong");
