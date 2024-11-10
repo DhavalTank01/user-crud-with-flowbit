@@ -9,6 +9,7 @@ const URLS = {
   Profile: "/settings/profile",
   PrivacyPolicy: "/privacy-policy",
   TermsAndConditions: "/terms-and-conditions",
+  Users: "/users",
 };
 
 export default URLS;

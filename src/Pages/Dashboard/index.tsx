@@ -1,45 +1,19 @@
-import { Button } from "flowbite-react";
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { getFullName } from "../../utils";
-import { logout } from "../../redux/slice/userSlice";
-import URLS from "../../Routes";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import axiosInstance from "../../axios";
-import { APIS } from "../../axios/apis";
+import CustomBreadcrumb from "../../Components/CustomBreadcrumb";
 
 const DashBoard = () => {
   const { user } = useSelector((state: any) => state.auth);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = React.useState({
-    logout: false,
-  });
 
-  const handleLogoutClick = async () => {
-    try {
-      setIsLoading({ ...isLoading, logout: true });
-      let response = await axiosInstance.put(APIS.LOGOUT);
-      if (response?.status === 200) {
-        toast.success(response?.data?.message);
-        dispatch(logout());
-        navigate(URLS.Login);
-      } else {
-        toast.error(response?.data?.message || "Something went wrong");
-        navigate(URLS.Login);
-      }
-    } catch (error: any) {
-      console.error(error);
-      toast.error(error?.response?.data?.message || "Something went wrong");
-    } finally {
-      setIsLoading({ ...isLoading, logout: false });
-    }
-  };
   return (
-    <div className="h-screen">
-      <h1>Dashboard</h1>
-      <div>Hello {getFullName(user)}</div>
+    <div>
+      <CustomBreadcrumb pageTitle="Dashboard" />
+      <div className="m-4 mb-6 rounded-lg bg-blue-50 p-6">
+        <h2 className="text-xl font-semibold text-blue-600">
+          Hello, {getFullName(user)}
+        </h2>
+        <p className="text-gray-600">Welcome back!</p>
+      </div>
     </div>
   );
 };

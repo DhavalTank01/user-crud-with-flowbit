@@ -1,5 +1,3 @@
-import React from "react";
-
 const ComingSoon = ({ title }: { title?: string }) => {
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center">

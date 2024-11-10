@@ -17,10 +17,8 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <Header />
         <Toaster />
         <App />
-        <Footer />
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,

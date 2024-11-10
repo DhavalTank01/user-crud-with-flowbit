@@ -1,0 +1,8 @@
+[data-testid="flowbite-avatar-initials-placeholder"] {
+  background-color: var(--avatar-background-color);
+  color: var(--avatar-text-color);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -3,7 +3,7 @@ import URLS from "../../Routes";
 import { Link } from "react-router-dom";
 
 const Footer = () => (
-  <FlowbiteFooter container>
+  <FlowbiteFooter container className="mt-auto py-4">
     <FlowbiteFooter.Copyright by="CRUD App" year={new Date().getFullYear()} />
     <FlowbiteFooter.LinkGroup>
       <div className="flex gap-2">
