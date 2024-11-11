@@ -12,7 +12,7 @@ const CustomBreadcrumb = ({
   return (
     <Breadcrumb
       aria-label="Default breadcrumb example"
-      className="sticky top-0 z-50 bg-gray-50 px-5 py-3 dark:bg-gray-800"
+      className="sticky top-0 z-10 bg-gray-50 px-5 py-3 dark:bg-gray-800"
     >
       <Breadcrumb.Item href={pageLink}>{pageTitle}</Breadcrumb.Item>
       {pageSubTitle && <Breadcrumb.Item>{pageSubTitle}</Breadcrumb.Item>}

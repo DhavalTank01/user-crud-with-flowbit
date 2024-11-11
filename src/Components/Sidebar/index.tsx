@@ -6,8 +6,6 @@ import URLS from "../../Routes";
 const CustomSidebar = () => {
   const navigate = useNavigate();
   const isActive = (path: string) => {
-    console.log(window.location.pathname);
-    console.log(path);
     return window.location.pathname === path;
   };
 
