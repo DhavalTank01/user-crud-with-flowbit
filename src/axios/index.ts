@@ -24,6 +24,7 @@ axiosInstance.interceptors.response.use(
           APIS.SEND_OTP,
           APIS.LOGIN_WITH_OTP,
           APIS.FORGOT_PASSWORD,
+          APIS.CHANGE_PASSWORD,
         ].includes(error?.response?.config?.url)
       ) {
         return Promise.resolve(error.response);

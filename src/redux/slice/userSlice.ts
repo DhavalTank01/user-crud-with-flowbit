@@ -27,6 +27,10 @@ const authSlice = createSlice({
         setCookie("backupToken", action.payload?.backupToken, 2);
       }
     },
+    setCurrentUser: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
+      secureLocalStorage.setItem("user", action.payload);
+    },
     logout: (state) => {
       state.user = null;
       secureLocalStorage.clear();
@@ -36,6 +40,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, setCurrentUser } = authSlice.actions;
 
 export default authSlice.reducer;

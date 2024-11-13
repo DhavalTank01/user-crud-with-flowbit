@@ -9,8 +9,11 @@ import { APIS } from "../../../axios/apis";
 import { convertTextCase, getFormattedDate } from "../../../utils";
 import toast from "react-hot-toast";
 import { User } from "../../../types/User";
+import { useDispatch } from "react-redux";
+import { setCurrentUser } from "../../../redux/slice/userSlice";
 
 const MyProfile = () => {
+  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [userDetails, setUserDetails] = useState({} as User);
   const [isLoading, setIsLoading] = useState({
@@ -37,6 +40,7 @@ const MyProfile = () => {
         if (response?.status === 200) {
           toast.success(response?.data?.message);
           setUserDetails(response?.data?.user);
+          dispatch(setCurrentUser(response?.data?.user));
         } else {
           toast.error(response?.data?.message || "Something went wrong");
         }
