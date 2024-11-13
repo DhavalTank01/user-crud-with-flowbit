@@ -1,9 +1,18 @@
 export interface User {
-  id: string;
+  id: number;
+  email: string;
   first_name: string;
   last_name: string;
-  email: string;
-  token: string;
+  phone_number: string;
+  dob: string;
+  role: "client" | "admin";
+  is_disabled: boolean;
+  is_deleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  last_login: string;
+  profile_image?: string | null;
+  profile_image_id?: string | null;
 }
 
 export interface AuthState {

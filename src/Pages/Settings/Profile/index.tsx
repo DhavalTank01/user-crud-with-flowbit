@@ -1,119 +1,186 @@
-import React, { useState, useEffect } from "react";
-import ComingSoon from "../../../Components/ComingSoon";
+import { useState, useEffect } from "react";
 import CustomBreadcrumb from "../../../Components/CustomBreadcrumb";
 import CustomButton from "../../../Components/Button";
+import Input from "../../../Components/Input";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import axiosInstance from "../../../axios";
+import { APIS } from "../../../axios/apis";
+import { convertTextCase, getFormattedDate } from "../../../utils";
+import toast from "react-hot-toast";
+import { User } from "../../../types/User";
 
 const MyProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [userDetails, setUserDetails] = useState({
-    id: 1,
-    email: "test1@yopmail.com",
-    first_name: "Dhaval",
-    last_name: "Tank",
-    phone_number: "1122334455",
-    dob: "2001-07-04T00:00:00.000Z",
-    role: "client",
-    is_disabled: false,
-    is_deleted: false,
-    profile_image: null,
+  const [userDetails, setUserDetails] = useState({} as User);
+  const [isLoading, setIsLoading] = useState({
+    pageLoading: true,
+  });
+  const formik = useFormik({
+    initialValues: {
+      first_name: "",
+      last_name: "",
+      phone_number: "",
+    },
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      try {
+        let payload = {
+          first_name: values?.first_name,
+          last_name: values?.last_name,
+          phone_number: values?.phone_number,
+        };
+        let response = await axiosInstance.put(
+          APIS.UPDATE_USER(userDetails?.id),
+          payload,
+        );
+        if (response?.status === 200) {
+          toast.success(response?.data?.message);
+          setUserDetails(response?.data?.user);
+        } else {
+          toast.error(response?.data?.message || "Something went wrong");
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        formik.resetForm();
+        setIsEditing(false);
+      }
+    },
+    validationSchema: Yup.object().shape({
+      first_name: Yup.string().required(),
+      last_name: Yup.string().required(),
+      phone_number: Yup.string().required(),
+    }),
   });
 
-  // Handle change in input fields
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUserDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
+  const getUserDetails = async () => {
+    try {
+      setIsLoading({ ...isLoading, pageLoading: true });
+      let response = await axiosInstance.get(APIS.GET_CURRENT_USER);
+      if (response?.status === 200) {
+        let user = response?.data?.user;
+        formik.setValues({
+          first_name: user?.first_name,
+          last_name: user?.last_name,
+          phone_number: user?.phone_number,
+        });
+        setUserDetails(user);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading({ ...isLoading, pageLoading: false });
+    }
   };
 
-  // Handle form submit to update the profile
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here you can call an API to update the user profile
-    console.log("Updated user details:", userDetails);
-    setIsEditing(false);
+  const handleEditClick = () => {
+    setIsEditing(true);
+    formik.setValues({
+      first_name: userDetails?.first_name,
+      last_name: userDetails?.last_name,
+      phone_number: userDetails?.phone_number,
+    });
   };
+
+  useEffect(() => {
+    getUserDetails();
+  }, []);
 
   return (
     <div className="my-profile-container">
       <CustomBreadcrumb pageTitle="Settings" pageSubTitle="My Profile" />
       <div className="content-wrapper">
         {isEditing ? (
-          <form onSubmit={handleSubmit} className="profile-form">
-            <div className="form-group">
-              <label>First Name</label>
-              <input
-                type="text"
+          <form onSubmit={formik.handleSubmit} className="p-4">
+            <div className="mb-4 flex flex-col flex-wrap justify-start gap-4">
+              <Input
+                id="first_name"
                 name="first_name"
-                value={userDetails.first_name}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Last Name</label>
-              <input
+                label="First Name"
                 type="text"
+                value={formik.values.first_name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={Boolean(formik.errors.first_name)}
+                helperText={formik.errors.first_name}
+              />
+              <Input
+                id="last_name"
                 name="last_name"
-                value={userDetails.last_name}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Phone Number</label>
-              <input
+                label="Last Name"
                 type="text"
+                value={formik.values.last_name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={Boolean(formik.errors.last_name)}
+                helperText={formik.errors.last_name}
+              />
+              <Input
+                id="phone_number"
                 name="phone_number"
-                value={userDetails.phone_number}
-                onChange={handleChange}
+                label="Phone Number"
+                type="text"
+                value={formik.values.phone_number}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={Boolean(formik.errors.phone_number)}
+                helperText={formik.errors.phone_number}
               />
             </div>
-            <div className="form-group">
-              <label>Date of Birth</label>
-              <input
-                type="date"
-                name="dob"
-                value={userDetails.dob.slice(0, 10)} // format the date to YYYY-MM-DD
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <button type="submit" className="btn-submit">
-                Update
-              </button>
-            </div>
+            <CustomButton
+              type="submit"
+              isLoading={formik.isSubmitting}
+              disabled={!formik.isValid}
+            >
+              Update
+            </CustomButton>
           </form>
         ) : (
           <div className="p-4">
+            <div></div>
             <div className="flex justify-between">
               <div>My details</div>
-              <CustomButton onClick={() => setIsEditing(true)}>
+              <CustomButton onClick={() => handleEditClick()}>
                 Edit
               </CustomButton>
             </div>
-            <div className="flex grid-rows-subgrid flex-wrap gap-4">
+            <div className="flex flex-wrap gap-8">
               <div>
-                <strong>Email:</strong> {userDetails.email}
+                <div>
+                  <p className="mb-2">
+                    <strong>First Name:</strong> {userDetails.first_name}
+                  </p>
+                  <p className="mb-2">
+                    <strong>Last Name:</strong> {userDetails.last_name}
+                  </p>
+                </div>
+                <div>
+                  <p className="mb-2">
+                    <strong>Phone Number:</strong> {userDetails.phone_number}
+                  </p>
+                  <p className="mb-2">
+                    <strong>Email:</strong> {userDetails.email}
+                  </p>
+                </div>
               </div>
               <div>
-                <strong>First Name:</strong> {userDetails.first_name}
-              </div>
-              <div>
-                <strong>Last Name:</strong> {userDetails.last_name}
-              </div>
-              <div>
-                <strong>Phone Number:</strong> {userDetails.phone_number}
-              </div>
-              <div>
-                <strong>Date of Birth:</strong>{" "}
-                {new Date(userDetails.dob).toLocaleDateString()}
-              </div>
-              <div>
-                <strong>Role:</strong> {userDetails.role}
-              </div>
-              <div>
-                <strong>Status:</strong>{" "}
-                {userDetails.is_disabled ? "Disabled" : "Active"}
+                <div>
+                  <p className="mb-2">
+                    <strong>Date of Birth:</strong>{" "}
+                    {getFormattedDate(userDetails.dob)}
+                  </p>
+                </div>
+                <div>
+                  <p className="mb-2">
+                    <strong>Role:</strong>{" "}
+                    {convertTextCase(userDetails.role, "titlecase")}
+                  </p>
+                  <p className="mb-2">
+                    <strong>Status:</strong>{" "}
+                    {userDetails.is_disabled ? "Disabled" : "Active"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

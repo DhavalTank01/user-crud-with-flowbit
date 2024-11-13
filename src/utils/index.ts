@@ -1,3 +1,4 @@
+import moment from "moment";
 import { CaseType } from "../types";
 import { User } from "../types/User";
 
@@ -72,6 +73,7 @@ const convertTextCase = (
       return text
         .replace(/([a-z])([A-Z])/g, "$1 $2")
         .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
+        .replace("_", " ")
         .toLowerCase()
         .replace(/^\w/, (match) => match.toUpperCase());
     case "initialLetters":
@@ -84,5 +86,24 @@ const convertTextCase = (
       return text;
   }
 };
+const getFormattedDate = (
+  date: string | undefined | null,
+  dateFormat: string = "DD/MM/YYYY",
+  inputFormat: string = "YYYY-MM-DDTHH:mm:ss.SSSZ",
+): string | undefined => {
+  if (!date) {
+    return undefined;
+  }
 
-export { getCookie, setCookie, clearAllCookies, getFullName, convertTextCase };
+  const dateObj = moment(date, inputFormat);
+  return dateObj.isValid() ? dateObj.format(dateFormat) : undefined;
+};
+
+export {
+  getCookie,
+  setCookie,
+  clearAllCookies,
+  getFullName,
+  convertTextCase,
+  getFormattedDate,
+};
