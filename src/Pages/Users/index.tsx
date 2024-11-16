@@ -55,15 +55,10 @@ const Users = () => {
     }
   }, []);
 
-  const handleEditClick = (user: User) => {
-    console.log("Edit button clicked");
-  };
-  const handleDeleteClick = (user: User) => {
-    console.log("Delete button clicked");
-  };
+  const handleEditClick = (user: User) => {};
+  const handleDeleteClick = (user: User) => {};
 
   const handleToggleUserStatus = async (user: User) => {
-    console.log(user);
     try {
       setIsLoading({ ...isLoading, userToggle: true });
       let response = await axiosInstance.put(APIS.UPDATE_USER_STATUS(user.id));
