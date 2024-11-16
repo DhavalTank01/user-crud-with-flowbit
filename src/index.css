@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.side-bar div {
+  @apply rounded-none;
+}
+.data-table thead tr th {
+  @apply sticky top-0 z-10  bg-white !important;
+}

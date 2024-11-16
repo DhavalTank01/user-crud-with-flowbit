@@ -1,104 +1,224 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Login from "./Pages/Login";
+import { useState, useEffect } from "react";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import DashBoard from "./Pages/Dashboard";
 import URLS from "./Routes";
 import SignUp from "./Pages/SignUp";
-import DashBoard from "./Pages/Dashboard";
-import useAuth from "./hooks/Auth";
-import LoginWithOtp from "./Pages/Login/LoginWithOtp";
-import ForgotPassword from "./Pages/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword";
+import ForgotPassword from "./Pages/ForgotPassword";
+import LoginWithOtp from "./Pages/Login/LoginWithOtp";
+import Login from "./Pages/Login";
+import toast from "react-hot-toast";
+import { login } from "./redux/slice/userSlice";
+import axiosInstance from "./axios";
+import { APIS } from "./axios/apis";
+import { getCookie } from "./utils";
+import secureLocalStorage from "react-secure-storage";
+import useAuth from "./hooks/Auth";
+import { useDispatch } from "react-redux";
+import MyProfile from "./Pages/Settings/Profile";
+import ChangePassword from "./Pages/Settings/ChangePassword";
+import PrivacyPolicy from "./Pages/PrivacyPolicy";
+import TermsAndConditions from "./Pages/TermsAndConditions";
+import Users from "./Pages/Users";
+import CustomSidebar from "./Components/Sidebar";
+import Header from "./Components/Header";
+import Footer from "./Components/Footer";
 
-function App() {
-  const PrivateRoute = ({ children }: { children: JSX.Element }) => {
-    const { isAuthenticated } = useAuth();
-    if (isAuthenticated()) {
-      return children;
-    } else {
-      return <Navigate to={URLS.Login} replace />;
+const App = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const [loading, setLoading] = useState(true);
+
+  const restoreSessionIfClearLocalStorage = async () => {
+    try {
+      const token = secureLocalStorage.getItem("token");
+      if (!token) {
+        const backupToken = getCookie("backupToken");
+        if (backupToken) {
+          let response = await axiosInstance.get(APIS.GET_USER_BY_TOKEN);
+          if (response?.status === 200) {
+            let user = response?.data?.user;
+            let token = response?.data?.user?.token;
+            dispatch(login({ user, token }));
+            navigate(URLS.Dashboard);
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    restoreSessionIfClearLocalStorage();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
+  const PrivateRoute = ({ children }: { children: JSX.Element }) => {
+    return isAuthenticated() ? children : <Navigate to={URLS.Login} replace />;
+  };
+
+  const SidebarWrapper = ({ children }: { children: JSX.Element }) => {
+    return (
+      <div className="flex h-screen flex-col">
+        <Header />
+        <div className="flex flex-1 overflow-hidden">
+          <div className="fixed left-0 top-[60px] h-[calc(100vh-60px)] w-64">
+            <CustomSidebar />
+          </div>
+          <div className="ml-64 flex flex-1 flex-col overflow-y-auto pt-[60px]">
+            <div className="flex-1">{children}</div>
+            <Footer />
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const PublicRoute = ({ children }: { children: JSX.Element }) => {
-    const { isAuthenticated } = useAuth();
-    if (!isAuthenticated()) {
-      return children;
-    } else {
-      return <Navigate to={URLS.Dashboard} replace />;
-    }
+    return !isAuthenticated() ? (
+      <div>
+        <Header />
+        {children}
+        <Footer />
+      </div>
+    ) : (
+      <Navigate to={URLS.Dashboard} replace />
+    );
   };
 
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* public routes */}
-        <Route
-          path={URLS.Login}
-          element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path={URLS.LoginWithOtp}
-          element={
-            <PublicRoute>
-              <LoginWithOtp />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path={URLS.ForgotPassword}
-          element={
-            <PublicRoute>
-              <ForgotPassword />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path={URLS.ResetPassword}
-          element={
-            <PublicRoute>
-              <ResetPassword />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path={URLS.SignUp}
-          element={
-            <PublicRoute>
-              <SignUp />
-            </PublicRoute>
-          }
-        />
-        {/* private routes */}
-        <Route
-          path={URLS.Dashboard}
-          element={
-            <PrivateRoute>
+    <Routes>
+      {/* public routes */}
+      <Route
+        path={URLS.Login}
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path={URLS.LoginWithOtp}
+        element={
+          <PublicRoute>
+            <LoginWithOtp />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path={URLS.ForgotPassword}
+        element={
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path={URLS.ResetPassword}
+        element={
+          <PublicRoute>
+            <ResetPassword />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path={URLS.SignUp}
+        element={
+          <PublicRoute>
+            <SignUp />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path={URLS.PrivacyPolicy}
+        element={
+          <div>
+            <Header />
+            <PrivacyPolicy />
+            <Footer />
+          </div>
+        }
+      />
+      <Route
+        path={URLS.TermsAndConditions}
+        element={
+          <div>
+            <Header />
+            <TermsAndConditions />
+            <Footer />
+          </div>
+        }
+      />
+      {/* private routes */}
+      <Route
+        path={URLS.Dashboard}
+        element={
+          <PrivateRoute>
+            <SidebarWrapper>
               <DashBoard />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="*"
-          element={
-            <PrivateRoute>
+            </SidebarWrapper>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path={URLS.Profile}
+        element={
+          <PrivateRoute>
+            <SidebarWrapper>
+              <MyProfile />
+            </SidebarWrapper>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path={URLS.ChangePassword}
+        element={
+          <PrivateRoute>
+            <SidebarWrapper>
+              <ChangePassword />
+            </SidebarWrapper>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <PrivateRoute>
+            <SidebarWrapper>
               <DashBoard />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          index
-          element={
-            <PrivateRoute>
+            </SidebarWrapper>
+          </PrivateRoute>
+        }
+      />
+      {/* pages */}
+      <Route
+        index
+        element={
+          <PrivateRoute>
+            <SidebarWrapper>
               <DashBoard />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+            </SidebarWrapper>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path={URLS.Users}
+        element={
+          <PrivateRoute>
+            <SidebarWrapper>
+              <Users />
+            </SidebarWrapper>
+          </PrivateRoute>
+        }
+      />
+    </Routes>
   );
-}
+};
 
 export default App;
