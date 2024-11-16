@@ -97,7 +97,7 @@ const MyProfile = () => {
       <div className="content-wrapper">
         {isEditing ? (
           <form onSubmit={formik.handleSubmit} className="p-4">
-            <div className="mb-4 flex flex-col flex-wrap justify-start gap-4">
+            <div className="mb-4 flex w-60 flex-col flex-wrap justify-start gap-4">
               <Input
                 id="first_name"
                 name="first_name"

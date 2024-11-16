@@ -15,8 +15,7 @@ const APIS = {
   UPDATE_USER: (userId: number) => `/user/${userId}`, // PUT
   DELETE_USER: (userId: number) => `/user/${userId}`, // DELETE
   GET_USER: (userId: number) => `/user/${userId}`, // GET
-  UPDATE_USER_STATUS: (userId: number, status: string) =>
-    `/user/${userId}/${status}`, // PUT
+  UPDATE_USER_STATUS: (userId: number) => `/user/toggle-status/${userId}`, // PUT
 };
 
 export { APIS };
