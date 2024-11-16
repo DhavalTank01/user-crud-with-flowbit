@@ -29,7 +29,7 @@ const SingleDatePicker: React.FC<SingleDatePickerPropsTypes> = ({
           }
         }}
         onBlur={onBlur}
-        value={value}
+        // value={value}
         name={name}
         id={id}
       />

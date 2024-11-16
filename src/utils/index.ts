@@ -99,6 +99,10 @@ const getFormattedDate = (
   return dateObj.isValid() ? dateObj.format(dateFormat) : undefined;
 };
 
+const classNames = (...classes: (string | undefined)[]): string => {
+  return classes?.filter(Boolean).join(" ");
+};
+
 export {
   getCookie,
   setCookie,
@@ -106,4 +110,5 @@ export {
   getFullName,
   convertTextCase,
   getFormattedDate,
+  classNames,
 };

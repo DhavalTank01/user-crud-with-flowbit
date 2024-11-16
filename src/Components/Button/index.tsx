@@ -6,6 +6,8 @@ interface CustomButtonPropsTypes {
   type?: "button" | "submit" | "reset" | undefined;
   disabled?: boolean;
   isLoading?: boolean;
+  color?: string;
+  className?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 }
 
@@ -15,6 +17,8 @@ const CustomButton = ({
   disabled = false,
   isLoading = false,
   onClick,
+  color,
+  className,
   ...rest
 }: CustomButtonPropsTypes) => {
   return (
@@ -22,6 +26,8 @@ const CustomButton = ({
       type={type}
       disabled={disabled || isLoading}
       onClick={onClick}
+      color={color ? color : undefined}
+      className={className}
       {...rest}
     >
       {isLoading ? (

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import ComingSoon from "../../Components/ComingSoon";
 import CustomBreadcrumb from "../../Components/CustomBreadcrumb";
-import { Pagination, Table, ToggleSwitch } from "flowbite-react";
+import { Table, ToggleSwitch } from "flowbite-react";
 import CustomPagination from "../../Components/CustomPagination";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
@@ -12,16 +11,23 @@ import UserAvatar from "../../Components/UserAvatar";
 import { convertTextCase, getFullName } from "../../utils";
 import { User } from "../../types/User";
 import useAuth from "../../hooks/Auth";
+import ConfirmModel from "../../Components/ConfirmModel";
+import CustomIconButton from "../../Components/CustomIconButton";
 
 const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([] as User[]);
   const currentUser = useAuth()?.getUserAndToken()?.user as User;
   const [isLoading, setIsLoading] = useState({
     pageLoading: true,
     userToggle: false,
     deleteUser: false,
+  });
+  const [modelDetails, setModelDetails] = useState({
+    isShow: false,
+    user: {},
+    type: "",
   });
 
   useEffect(() => {
@@ -56,7 +62,13 @@ const Users = () => {
   }, []);
 
   const handleEditClick = (user: User) => {};
-  const handleDeleteClick = (user: User) => {};
+  const handleDeleteClick = (user: User) => {
+    setModelDetails({
+      isShow: true,
+      user,
+      type: "delete",
+    });
+  };
 
   const handleToggleUserStatus = async (user: User) => {
     try {
@@ -64,7 +76,13 @@ const Users = () => {
       let response = await axiosInstance.put(APIS.UPDATE_USER_STATUS(user.id));
       if (response?.status === 200) {
         toast.success(response?.data?.message);
-        await getUsers();
+        let newUsers = users?.map((u: User) => {
+          if (u.id === user.id) {
+            return { ...u, is_disabled: !u?.is_disabled };
+          }
+          return u;
+        }) as User[];
+        setUsers(newUsers);
       } else {
         toast.error(response?.data?.message);
       }
@@ -74,6 +92,34 @@ const Users = () => {
     } finally {
       setIsLoading({ ...isLoading, userToggle: false });
     }
+  };
+
+  const handleDeleteUser = async (user: User) => {
+    try {
+      setIsLoading({ ...isLoading, deleteUser: true });
+      let response = await axiosInstance.delete(APIS.DELETE_USER(user?.id));
+      if (response?.status === 200) {
+        toast.success(response?.data?.message);
+        let newUsers = users.filter((u: User) => u.id !== user.id);
+        setUsers(newUsers);
+        handleClose();
+      } else {
+        toast.error(response?.data?.message);
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setIsLoading({ ...isLoading, deleteUser: false });
+    }
+  };
+
+  const handleClose = () => {
+    setModelDetails({
+      isShow: false,
+      user: {},
+      type: "",
+    });
   };
 
   return (
@@ -118,23 +164,26 @@ const Users = () => {
                   <ToggleSwitch
                     disabled={currentUser?.id === user.id}
                     checked={!user.is_disabled}
-                    label={!user.is_disabled ? "Active" : "Disabled"}
                     onChange={() => handleToggleUserStatus(user)}
                   />
                 </Table.Cell>
-                <Table.Cell className="flex gap-2">
-                  <button
-                    onClick={() => handleEditClick(user)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    <MdEdit />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(user)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <MdDelete />
-                  </button>
+                <Table.Cell>
+                  <div className="flex gap-4 align-middle">
+                    <CustomIconButton
+                      onClick={() => handleEditClick(user)}
+                      className="text-blue-500 hover:text-blue-700"
+                      disabled={currentUser?.id === user.id}
+                    >
+                      <MdEdit />
+                    </CustomIconButton>
+                    <CustomIconButton
+                      disabled={currentUser?.id === user.id}
+                      onClick={() => handleDeleteClick(user)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <MdDelete />
+                    </CustomIconButton>
+                  </div>
                 </Table.Cell>
               </Table.Row>
             ))}
@@ -148,6 +197,16 @@ const Users = () => {
         handleItemsPerPageChange={handleItemsPerPageChange}
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
+      />
+      <ConfirmModel
+        isShow={modelDetails?.isShow}
+        onClose={handleClose}
+        onApprove={() => handleDeleteUser(modelDetails?.user as User)}
+        onReject={handleClose}
+        modelDetails={modelDetails}
+        approveButtonText="Delete"
+        rejectButtonText="Cancel"
+        typeColorClass="text-red-500"
       />
     </div>
   );

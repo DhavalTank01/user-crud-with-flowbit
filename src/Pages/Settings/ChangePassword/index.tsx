@@ -64,7 +64,7 @@ const ChangePassword = () => {
     <div>
       <CustomBreadcrumb pageTitle="Settings" pageSubTitle="Change Password" />
       <form onSubmit={formik.handleSubmit} className="p-4">
-        <div className="mb-4 flex flex-col flex-wrap justify-start gap-4">
+        <div className="mb-4 flex w-60 flex-col flex-wrap justify-start gap-4">
           <Input
             name="current_password"
             placeholder="Current Password"
