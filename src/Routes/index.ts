@@ -10,6 +10,8 @@ const URLS = {
   PrivacyPolicy: "/privacy-policy",
   TermsAndConditions: "/terms-and-conditions",
   Users: "/users",
+  AddUser: "/users/add",
+  EditUser: "/users/edit",
 };
 
 export default URLS;

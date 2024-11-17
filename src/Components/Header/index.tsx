@@ -40,11 +40,14 @@ function Header() {
   return (
     <Navbar fluid rounded className="h-15 fixed left-0 right-0 top-0 z-20">
       <Navbar.Brand>
-        <Link to={isAuthenticated ? URLS.Dashboard : URLS.Login}>
-          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-            CRUD App
-          </span>
-        </Link>
+        <span
+          className="cursor-pointer self-center whitespace-nowrap text-xl font-semibold dark:text-white"
+          onClick={() =>
+            navigate(isAuthenticated ? URLS.Dashboard : URLS.Login)
+          }
+        >
+          CRUD App
+        </span>
       </Navbar.Brand>
       {isAuthenticated ? (
         <div className="flex md:order-2">

@@ -13,11 +13,18 @@ import { User } from "../../types/User";
 import useAuth from "../../hooks/Auth";
 import ConfirmModel from "../../Components/ConfirmModel";
 import CustomIconButton from "../../Components/CustomIconButton";
+import PageLoader from "../../Components/PageLoader";
+import CustomButton from "../../Components/Button";
+import URLS from "../../Routes";
+import { useNavigate } from "react-router-dom";
+import { HiUserAdd } from "react-icons/hi";
 
 const Users = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [users, setUsers] = useState([] as User[]);
+  const [totalUsers, setTotalUsers] = useState(0);
   const currentUser = useAuth()?.getUserAndToken()?.user as User;
   const [isLoading, setIsLoading] = useState({
     pageLoading: true,
@@ -52,6 +59,7 @@ const Users = () => {
       let response = await axiosInstance.get(APIS.GET_ALL_USERS);
       if (response?.status === 200) {
         setUsers(response?.data?.users);
+        setTotalUsers(response?.data?.totalCount);
       }
     } catch (error: any) {
       console.error(error);
@@ -61,7 +69,9 @@ const Users = () => {
     }
   }, []);
 
-  const handleEditClick = (user: User) => {};
+  const handleEditClick = (user: User) => {
+    navigate(`${URLS.EditUser}/${user.id}`);
+  };
   const handleDeleteClick = (user: User) => {
     setModelDetails({
       isShow: true,
@@ -125,89 +135,108 @@ const Users = () => {
   return (
     <div>
       <CustomBreadcrumb pageTitle="Users" />
-      <div className="max-h-[500px] overflow-y-auto">
-        <Table className="data-table" hoverable>
-          <Table.Head>
-            <Table.HeadCell>User ID</Table.HeadCell>
-            <Table.HeadCell>Full Name</Table.HeadCell>
-            <Table.HeadCell>Email</Table.HeadCell>
-            <Table.HeadCell>Phone Number</Table.HeadCell>
-            <Table.HeadCell>Role</Table.HeadCell>
-            <Table.HeadCell>Status</Table.HeadCell>
-            <Table.HeadCell>Actions</Table.HeadCell>
-            <Table.HeadCell>
-              <span className="sr-only">Edit</span>
-            </Table.HeadCell>
-          </Table.Head>
-          <Table.Body className="divide-y">
-            {/* Table rows */}
-            {users.map((user: any, index: number) => (
-              <Table.Row
-                key={index}
-                className="bg-white dark:border-gray-700 dark:bg-gray-800"
-              >
-                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  #{user.id}
-                </Table.Cell>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <UserAvatar user={user} />
-                    <div>{getFullName(user)}</div>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>{user.email}</Table.Cell>
-                <Table.Cell>{user.phone_number}</Table.Cell>
-                <Table.Cell>
-                  {convertTextCase(user.role, "titlecase")}
-                </Table.Cell>
-                <Table.Cell>
-                  <ToggleSwitch
-                    disabled={currentUser?.id === user.id}
-                    checked={!user.is_disabled}
-                    onChange={() => handleToggleUserStatus(user)}
-                  />
-                </Table.Cell>
-                <Table.Cell>
-                  <div className="flex gap-4 align-middle">
-                    <CustomIconButton
-                      onClick={() => handleEditClick(user)}
-                      className="text-blue-500 hover:text-blue-700"
-                      disabled={currentUser?.id === user.id}
-                    >
-                      <MdEdit />
-                    </CustomIconButton>
-                    <CustomIconButton
-                      disabled={currentUser?.id === user.id}
-                      onClick={() => handleDeleteClick(user)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <MdDelete />
-                    </CustomIconButton>
-                  </div>
-                </Table.Cell>
-              </Table.Row>
-            ))}
-            {/* Add additional rows as needed */}
-          </Table.Body>
-        </Table>
-      </div>
-      <CustomPagination
-        totalItems={100}
-        onPageChange={handlePageChange}
-        handleItemsPerPageChange={handleItemsPerPageChange}
-        currentPage={currentPage}
-        itemsPerPage={itemsPerPage}
-      />
-      <ConfirmModel
-        isShow={modelDetails?.isShow}
-        onClose={handleClose}
-        onApprove={() => handleDeleteUser(modelDetails?.user as User)}
-        onReject={handleClose}
-        modelDetails={modelDetails}
-        approveButtonText="Delete"
-        rejectButtonText="Cancel"
-        typeColorClass="text-red-500"
-      />
+      {isLoading.pageLoading ? (
+        <PageLoader />
+      ) : (
+        <React.Fragment>
+          <div className="mb-4 flex items-center justify-between p-4">
+            <div>Users ({totalUsers})</div>
+            <CustomButton
+              type="button"
+              color="light"
+              onClick={() => {
+                navigate(URLS.AddUser);
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <span>Add User</span>
+                <HiUserAdd />
+              </div>
+            </CustomButton>
+          </div>
+          <div className="max-h-[500px] overflow-y-auto">
+            <Table className="data-table" hoverable>
+              <Table.Head>
+                <Table.HeadCell>User ID</Table.HeadCell>
+                <Table.HeadCell>Full Name</Table.HeadCell>
+                <Table.HeadCell>Email</Table.HeadCell>
+                <Table.HeadCell>Phone Number</Table.HeadCell>
+                <Table.HeadCell>Role</Table.HeadCell>
+                <Table.HeadCell>Status</Table.HeadCell>
+                <Table.HeadCell>Actions</Table.HeadCell>
+              </Table.Head>
+              <Table.Body className="divide-y">
+                {/* Table rows */}
+                {users.map((user: any, index: number) => (
+                  <Table.Row
+                    key={index}
+                    className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                  >
+                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                      #{user.id}
+                    </Table.Cell>
+                    <Table.Cell>
+                      <div className="flex items-center gap-2">
+                        <UserAvatar user={user} />
+                        <div>{getFullName(user)}</div>
+                      </div>
+                    </Table.Cell>
+                    <Table.Cell>{user.email}</Table.Cell>
+                    <Table.Cell>{user.phone_number}</Table.Cell>
+                    <Table.Cell>
+                      {convertTextCase(user.role, "titlecase")}
+                    </Table.Cell>
+                    <Table.Cell>
+                      <ToggleSwitch
+                        disabled={currentUser?.id === user.id}
+                        checked={!user.is_disabled}
+                        onChange={() => handleToggleUserStatus(user)}
+                      />
+                    </Table.Cell>
+                    <Table.Cell>
+                      <div className="flex gap-4 align-middle">
+                        <CustomIconButton
+                          onClick={() => handleEditClick(user)}
+                          className="text-blue-500 hover:text-blue-700"
+                          disabled={currentUser?.id === user.id}
+                        >
+                          <MdEdit />
+                        </CustomIconButton>
+                        <CustomIconButton
+                          disabled={currentUser?.id === user.id}
+                          onClick={() => handleDeleteClick(user)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <MdDelete />
+                        </CustomIconButton>
+                      </div>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+                {/* Add additional rows as needed */}
+              </Table.Body>
+            </Table>
+          </div>
+          <CustomPagination
+            totalItems={100}
+            onPageChange={handlePageChange}
+            handleItemsPerPageChange={handleItemsPerPageChange}
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+          />
+          <ConfirmModel
+            isShow={modelDetails?.isShow}
+            onClose={handleClose}
+            onApprove={() => handleDeleteUser(modelDetails?.user as User)}
+            onReject={handleClose}
+            modelDetails={modelDetails}
+            approveButtonText="Delete"
+            rejectButtonText="Cancel"
+            typeColorClass="text-red-500"
+            approveButtonColor="failure"
+          />
+        </React.Fragment>
+      )}
     </div>
   );
 };

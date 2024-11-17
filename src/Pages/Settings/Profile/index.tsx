@@ -11,6 +11,8 @@ import toast from "react-hot-toast";
 import { User } from "../../../types/User";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "../../../redux/slice/userSlice";
+import SingleDatePicker from "../../../Components/SingleDatePicker";
+import moment from "moment";
 
 const MyProfile = () => {
   const dispatch = useDispatch();
@@ -24,6 +26,7 @@ const MyProfile = () => {
       first_name: "",
       last_name: "",
       phone_number: "",
+      dob: "",
     },
     enableReinitialize: true,
     onSubmit: async (values) => {
@@ -32,6 +35,7 @@ const MyProfile = () => {
           first_name: values?.first_name,
           last_name: values?.last_name,
           phone_number: values?.phone_number,
+          dob: getFormattedDate(values?.dob, "YYYY-MM-DD"),
         };
         let response = await axiosInstance.put(
           APIS.UPDATE_USER(userDetails?.id),
@@ -55,6 +59,7 @@ const MyProfile = () => {
       first_name: Yup.string().required(),
       last_name: Yup.string().required(),
       phone_number: Yup.string().required(),
+      dob: Yup.string().required(),
     }),
   });
 
@@ -68,6 +73,7 @@ const MyProfile = () => {
           first_name: user?.first_name,
           last_name: user?.last_name,
           phone_number: user?.phone_number,
+          dob: new Date(user?.dob).toString(),
         });
         setUserDetails(user);
       }
@@ -84,6 +90,7 @@ const MyProfile = () => {
       first_name: userDetails?.first_name,
       last_name: userDetails?.last_name,
       phone_number: userDetails?.phone_number,
+      dob: new Date(userDetails?.dob).toString(),
     });
   };
 
@@ -130,6 +137,21 @@ const MyProfile = () => {
                 onBlur={formik.handleBlur}
                 error={Boolean(formik.errors.phone_number)}
                 helperText={formik.errors.phone_number}
+              />
+              <SingleDatePicker
+                label="Date of Birth"
+                name="dob"
+                id="dob"
+                value={
+                  !!formik.values.dob ? new Date(formik.values.dob) : new Date()
+                }
+                onChange={(e: any) => {
+                  formik.setFieldValue("dob", e);
+                }}
+                onBlur={formik.handleBlur}
+                maxDate={new Date()}
+                error={!!formik.errors.dob}
+                helperText={formik.errors.dob}
               />
             </div>
             <CustomButton

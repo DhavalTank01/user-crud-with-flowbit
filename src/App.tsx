@@ -23,6 +23,8 @@ import Users from "./Pages/Users";
 import CustomSidebar from "./Components/Sidebar";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
+import AddUser from "./Pages/Users/AddUser";
+import EditUser from "./Pages/Users/EditUser";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -213,6 +215,26 @@ const App = () => {
           <PrivateRoute>
             <SidebarWrapper>
               <Users />
+            </SidebarWrapper>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path={URLS.AddUser}
+        element={
+          <PrivateRoute>
+            <SidebarWrapper>
+              <AddUser />
+            </SidebarWrapper>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path={`${URLS.EditUser}/:id`}
+        element={
+          <PrivateRoute>
+            <SidebarWrapper>
+              <EditUser />
             </SidebarWrapper>
           </PrivateRoute>
         }
