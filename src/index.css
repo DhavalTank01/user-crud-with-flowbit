@@ -13,3 +13,7 @@
 .data-table tbody tr td {
   @apply px-2 py-2;
 }
+
+.active-page-title span {
+  color: #374151;
+}

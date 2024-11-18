@@ -2,12 +2,20 @@ import { Sidebar } from "flowbite-react";
 import { HiChartPie, HiUser } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import URLS from "../../Routes";
+import useAuth from "../../hooks/Auth";
+import { User } from "../../types/User";
+import { ADMIN_SIDE_BAR, DEFAULT_SIDE_BAR } from "../../constants";
 
 const CustomSidebar = () => {
   const navigate = useNavigate();
+  const currentUser = useAuth()?.getUserAndToken()?.user as User;
   const isActive = (path: string) => {
     return window.location.pathname === path;
   };
+
+  let role = currentUser?.role;
+  let isAdmin = role === "admin";
+  let SIDEBAR = isAdmin ? ADMIN_SIDE_BAR : DEFAULT_SIDE_BAR;
 
   return (
     <Sidebar
@@ -16,22 +24,17 @@ const CustomSidebar = () => {
     >
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Sidebar.Item
-            onClick={() => navigate(URLS.Dashboard)}
-            icon={HiChartPie}
-            active={isActive(URLS.Dashboard)}
-            className="cursor-pointer"
-          >
-            Dashboard
-          </Sidebar.Item>
-          <Sidebar.Item
-            active={isActive(URLS.Users)}
-            onClick={() => navigate(URLS.Users)}
-            icon={HiUser}
-            className="cursor-pointer"
-          >
-            Users
-          </Sidebar.Item>
+          {SIDEBAR.map((item) => (
+            <Sidebar.Item
+              key={item.name}
+              onClick={() => navigate(item.path)}
+              icon={item.icon}
+              active={isActive(item.path)}
+              className="cursor-pointer"
+            >
+              {item.name}
+            </Sidebar.Item>
+          ))}
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>

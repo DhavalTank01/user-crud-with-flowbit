@@ -1,35 +1,36 @@
-import { useState, useEffect } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import DashBoard from "./Pages/Dashboard";
 import URLS from "./Routes";
-import SignUp from "./Pages/SignUp";
+import EditUser from "./Pages/Users/EditUser";
+import AddUser from "./Pages/Users/AddUser";
+import Users from "./Pages/Users";
+import ChangePassword from "./Pages/Settings/ChangePassword";
+import MyProfile from "./Pages/Settings/Profile";
+import DashBoard from "./Pages/Dashboard";
+import Header from "./Components/Header";
+import TermsAndConditions from "./Pages/TermsAndConditions";
+import { Footer } from "flowbite-react";
+import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import ResetPassword from "./Pages/ResetPassword";
 import ForgotPassword from "./Pages/ForgotPassword";
 import LoginWithOtp from "./Pages/Login/LoginWithOtp";
 import Login from "./Pages/Login";
+import { CLIENT_PAGES } from "./constants";
+import { User } from "./types/User";
+import CustomSidebar from "./Components/Sidebar";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { login } from "./redux/slice/userSlice";
 import axiosInstance from "./axios";
 import { APIS } from "./axios/apis";
 import { getCookie } from "./utils";
 import secureLocalStorage from "react-secure-storage";
-import useAuth from "./hooks/Auth";
 import { useDispatch } from "react-redux";
-import MyProfile from "./Pages/Settings/Profile";
-import ChangePassword from "./Pages/Settings/ChangePassword";
-import PrivacyPolicy from "./Pages/PrivacyPolicy";
-import TermsAndConditions from "./Pages/TermsAndConditions";
-import Users from "./Pages/Users";
-import CustomSidebar from "./Components/Sidebar";
-import Header from "./Components/Header";
-import Footer from "./Components/Footer";
-import AddUser from "./Pages/Users/AddUser";
-import EditUser from "./Pages/Users/EditUser";
+import useAuth from "./hooks/Auth";
 
 const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, getUserAndToken } = useAuth();
   const [loading, setLoading] = useState(true);
 
   const restoreSessionIfClearLocalStorage = async () => {
@@ -38,10 +39,10 @@ const App = () => {
       if (!token) {
         const backupToken = getCookie("backupToken");
         if (backupToken) {
-          let response = await axiosInstance.get(APIS.GET_USER_BY_TOKEN);
+          const response = await axiosInstance.get(APIS.GET_USER_BY_TOKEN);
           if (response?.status === 200) {
-            let user = response?.data?.user;
-            let token = response?.data?.user?.token;
+            const user = response.data.user;
+            const token = response.data.user.token;
             dispatch(login({ user, token }));
             navigate(URLS.Dashboard);
           }
@@ -61,8 +62,22 @@ const App = () => {
 
   if (loading) return <div>Loading...</div>;
 
-  const PrivateRoute = ({ children }: { children: JSX.Element }) => {
-    return isAuthenticated() ? children : <Navigate to={URLS.Login} replace />;
+  const PrivateRoute = ({
+    children,
+    path,
+  }: {
+    children: JSX.Element;
+    path?: string;
+  }) => {
+    if (!isAuthenticated()) {
+      return <Navigate to={URLS.Login} replace />;
+    }
+
+    if (path && !isHaveAccess(path)) {
+      return <Navigate to={URLS.Dashboard} replace />;
+    }
+
+    return children;
   };
 
   const SidebarWrapper = ({ children }: { children: JSX.Element }) => {
@@ -94,9 +109,15 @@ const App = () => {
     );
   };
 
+  const isHaveAccess = (path: string) => {
+    if (!isAuthenticated()) return false;
+    const user = getUserAndToken()?.user as User;
+    return user?.role === "client" ? CLIENT_PAGES.includes(path) : true;
+  };
+
   return (
     <Routes>
-      {/* public routes */}
+      {/* Public Routes */}
       <Route
         path={URLS.Login}
         element={
@@ -130,14 +151,6 @@ const App = () => {
         }
       />
       <Route
-        path={URLS.SignUp}
-        element={
-          <PublicRoute>
-            <SignUp />
-          </PublicRoute>
-        }
-      />
-      <Route
         path={URLS.PrivacyPolicy}
         element={
           <div>
@@ -157,7 +170,8 @@ const App = () => {
           </div>
         }
       />
-      {/* private routes */}
+
+      {/* Private Routes */}
       <Route
         path={URLS.Dashboard}
         element={
@@ -189,30 +203,9 @@ const App = () => {
         }
       />
       <Route
-        path="*"
-        element={
-          <PrivateRoute>
-            <SidebarWrapper>
-              <DashBoard />
-            </SidebarWrapper>
-          </PrivateRoute>
-        }
-      />
-      {/* pages */}
-      <Route
-        index
-        element={
-          <PrivateRoute>
-            <SidebarWrapper>
-              <DashBoard />
-            </SidebarWrapper>
-          </PrivateRoute>
-        }
-      />
-      <Route
         path={URLS.Users}
         element={
-          <PrivateRoute>
+          <PrivateRoute path={URLS.Users}>
             <SidebarWrapper>
               <Users />
             </SidebarWrapper>
@@ -239,6 +232,7 @@ const App = () => {
           </PrivateRoute>
         }
       />
+      <Route path="*" element={<Navigate to={URLS.Dashboard} replace />} />
     </Routes>
   );
 };

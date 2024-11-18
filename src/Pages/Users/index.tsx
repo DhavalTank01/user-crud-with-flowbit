@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import CustomBreadcrumb from "../../Components/CustomBreadcrumb";
-import { Table, ToggleSwitch } from "flowbite-react";
+import { Badge, Table, ToggleSwitch } from "flowbite-react";
 import CustomPagination from "../../Components/CustomPagination";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
@@ -8,7 +8,7 @@ import axiosInstance from "../../axios";
 import { APIS } from "../../axios/apis";
 import toast from "react-hot-toast";
 import UserAvatar from "../../Components/UserAvatar";
-import { convertTextCase, getFullName } from "../../utils";
+import { convertTextCase, getFormattedDate, getFullName } from "../../utils";
 import { User } from "../../types/User";
 import useAuth from "../../hooks/Auth";
 import ConfirmModel from "../../Components/ConfirmModel";
@@ -17,7 +17,8 @@ import PageLoader from "../../Components/PageLoader";
 import CustomButton from "../../Components/Button";
 import URLS from "../../Routes";
 import { useNavigate } from "react-router-dom";
-import { HiUserAdd } from "react-icons/hi";
+import { HiUser, HiUserAdd } from "react-icons/hi";
+import CustomUserRoleBadge from "../../Components/CustomUserRoleBadge";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -163,11 +164,12 @@ const Users = () => {
                 <Table.HeadCell>Phone Number</Table.HeadCell>
                 <Table.HeadCell>Role</Table.HeadCell>
                 <Table.HeadCell>Status</Table.HeadCell>
+                <Table.HeadCell>Last login</Table.HeadCell>
                 <Table.HeadCell>Actions</Table.HeadCell>
               </Table.Head>
               <Table.Body className="divide-y">
                 {/* Table rows */}
-                {users.map((user: any, index: number) => (
+                {users.map((user: User, index: number) => (
                   <Table.Row
                     key={index}
                     className="bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -184,7 +186,7 @@ const Users = () => {
                     <Table.Cell>{user.email}</Table.Cell>
                     <Table.Cell>{user.phone_number}</Table.Cell>
                     <Table.Cell>
-                      {convertTextCase(user.role, "titlecase")}
+                      <CustomUserRoleBadge user={user} />
                     </Table.Cell>
                     <Table.Cell>
                       <ToggleSwitch
@@ -192,6 +194,12 @@ const Users = () => {
                         checked={!user.is_disabled}
                         onChange={() => handleToggleUserStatus(user)}
                       />
+                    </Table.Cell>
+                    <Table.Cell>
+                      {getFormattedDate(
+                        user.last_login,
+                        "DD/MM/YYYY hh:mm:ss A",
+                      )}
                     </Table.Cell>
                     <Table.Cell>
                       <div className="flex gap-4 align-middle">

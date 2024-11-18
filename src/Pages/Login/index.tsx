@@ -9,10 +9,13 @@ import { APIS } from "../../axios/apis";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/slice/userSlice";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
+import secureLocalStorage from "react-secure-storage";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const errorMessage = secureLocalStorage.getItem("errorMessage") as string;
   interface FormValues {
     email: string;
     password: string;
@@ -55,6 +58,13 @@ const Login = () => {
       formik.setSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (errorMessage?.length > 0) {
+      toast.error(errorMessage || "Something went wrong");
+      secureLocalStorage.removeItem("errorMessage");
+    }
+  }, []);
 
   return (
     <div className="flex h-screen w-full items-center justify-center">

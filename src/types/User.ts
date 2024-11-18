@@ -13,6 +13,7 @@ export interface User {
   last_login: string;
   profile_image?: string | null;
   profile_image_id?: string | null;
+  activity_status?: "away" | "busy" | "offline" | "online";
 }
 
 export interface AuthState {

@@ -7,4 +7,9 @@ type CaseType =
   | "errorMessage"
   | "initialLetters";
 
-export type { CaseType };
+type OptionsTypes = {
+  value: string;
+  label: string;
+};
+
+export type { CaseType, OptionsTypes };

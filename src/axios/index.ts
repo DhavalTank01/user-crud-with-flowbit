@@ -4,6 +4,8 @@ import secureLocalStorage from "react-secure-storage";
 import { clearAllCookies, getCookie } from "../utils";
 import URLS from "../Routes";
 import toast from "react-hot-toast";
+import store from "../redux/store";
+import { logout } from "../redux/slice/userSlice";
 
 const axiosInstance = axios.create({
   baseURL: APIS.BASE_URL,
@@ -29,9 +31,11 @@ axiosInstance.interceptors.response.use(
       ) {
         return Promise.resolve(error.response);
       } else {
-        toast.error(error?.response?.data?.message || "Something went wrong");
-        secureLocalStorage.clear();
-        clearAllCookies();
+        store.dispatch(logout());
+        secureLocalStorage.setItem(
+          "errorMessage",
+          error?.response?.data?.message,
+        );
         window.location.href = URLS.Login;
       }
     }
