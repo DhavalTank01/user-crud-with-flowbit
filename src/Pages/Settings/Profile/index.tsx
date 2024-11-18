@@ -6,13 +6,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axiosInstance from "../../../axios";
 import { APIS } from "../../../axios/apis";
-import { convertTextCase, getFormattedDate } from "../../../utils";
+import { getFormattedDate } from "../../../utils";
 import toast from "react-hot-toast";
 import { User } from "../../../types/User";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "../../../redux/slice/userSlice";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
-import moment from "moment";
 import CustomUserRoleBadge from "../../../Components/CustomUserRoleBadge";
 import CustomUserStatusBadge from "../../../Components/CustomUserStatusBadge";
 import CustomSelect from "../../../Components/CustomSelect";
@@ -129,9 +128,9 @@ const MyProfile = () => {
   }, []);
 
   return (
-    <div className="my-profile-container">
+    <div className="">
       <CustomBreadcrumb pageTitle="Settings" pageSubTitle="My Profile" />
-      <div className="content-wrapper">
+      <div className="">
         {isEditing ? (
           <form onSubmit={formik.handleSubmit} className="p-4">
             <div className="mb-4 flex w-60 flex-col flex-wrap justify-start gap-4">
@@ -228,6 +227,13 @@ const MyProfile = () => {
                   </p>
                 </div>
                 <div>
+                  <div className="mb-2 flex gap-2">
+                    <strong>Last Login:</strong>{" "}
+                    {getFormattedDate(
+                      userDetails.last_login,
+                      "DD/MM/YYYY hh:mm:ss A",
+                    )}
+                  </div>
                   <div className="mb-2 flex gap-2">
                     <strong>Role:</strong>{" "}
                     <CustomUserRoleBadge user={userDetails} />

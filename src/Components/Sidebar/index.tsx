@@ -1,7 +1,5 @@
 import { Sidebar } from "flowbite-react";
-import { HiChartPie, HiUser } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
-import URLS from "../../Routes";
 import useAuth from "../../hooks/Auth";
 import { User } from "../../types/User";
 import { ADMIN_SIDE_BAR, DEFAULT_SIDE_BAR } from "../../constants";

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import CustomBreadcrumb from "../../Components/CustomBreadcrumb";
-import { Badge, Table, ToggleSwitch } from "flowbite-react";
+import { Table, ToggleSwitch } from "flowbite-react";
 import CustomPagination from "../../Components/CustomPagination";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
@@ -8,7 +8,7 @@ import axiosInstance from "../../axios";
 import { APIS } from "../../axios/apis";
 import toast from "react-hot-toast";
 import UserAvatar from "../../Components/UserAvatar";
-import { convertTextCase, getFormattedDate, getFullName } from "../../utils";
+import { getFormattedDate, getFullName } from "../../utils";
 import { User } from "../../types/User";
 import useAuth from "../../hooks/Auth";
 import ConfirmModel from "../../Components/ConfirmModel";
@@ -17,7 +17,7 @@ import PageLoader from "../../Components/PageLoader";
 import CustomButton from "../../Components/Button";
 import URLS from "../../Routes";
 import { useNavigate } from "react-router-dom";
-import { HiUser, HiUserAdd } from "react-icons/hi";
+import { HiUserAdd } from "react-icons/hi";
 import CustomUserRoleBadge from "../../Components/CustomUserRoleBadge";
 
 const Users = () => {

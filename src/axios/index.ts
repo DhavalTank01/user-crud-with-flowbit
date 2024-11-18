@@ -1,9 +1,8 @@
 import axios from "axios";
 import { APIS } from "./apis";
 import secureLocalStorage from "react-secure-storage";
-import { clearAllCookies, getCookie } from "../utils";
+import { getCookie } from "../utils";
 import URLS from "../Routes";
-import toast from "react-hot-toast";
 import store from "../redux/store";
 import { logout } from "../redux/slice/userSlice";
 
