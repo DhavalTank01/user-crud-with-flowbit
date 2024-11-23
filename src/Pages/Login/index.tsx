@@ -60,7 +60,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (errorMessage?.length > 0) {
+    if (errorMessage && errorMessage?.length > 0) {
       toast.error(errorMessage || "Something went wrong");
       secureLocalStorage.removeItem("errorMessage");
     }

@@ -1,6 +1,7 @@
 import { Label, Select } from "flowbite-react";
 import React from "react";
 import { OptionsTypes } from "../../types";
+import { classNames } from "../../utils";
 interface CustomSelectProps {
   name: string;
   id: string;
@@ -10,6 +11,8 @@ interface CustomSelectProps {
   onBlur?: React.ChangeEventHandler<HTMLSelectElement> | undefined;
   disabled?: boolean;
   options?: OptionsTypes[];
+  parentClassName?: string;
+  selectClassName?: string;
   [key: string]: any;
 }
 
@@ -22,11 +25,13 @@ const CustomSelect = ({
   onBlur,
   disabled,
   options,
+  parentClassName,
+  selectClassName,
   ...rest
 }: CustomSelectProps) => {
   return (
-    <div className="">
-      <div className="mb-2 block">
+    <div className={parentClassName}>
+      <div className={classNames("mb-2 block", selectClassName)}>
         <Label htmlFor={id} value={label} />
       </div>
       <Select

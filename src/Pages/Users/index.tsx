@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import CustomBreadcrumb from "../../Components/CustomBreadcrumb";
-import { Table, ToggleSwitch } from "flowbite-react";
+import { Badge, Table, ToggleSwitch } from "flowbite-react";
 import CustomPagination from "../../Components/CustomPagination";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
@@ -8,7 +8,7 @@ import axiosInstance from "../../axios";
 import { APIS } from "../../axios/apis";
 import toast from "react-hot-toast";
 import UserAvatar from "../../Components/UserAvatar";
-import { getFormattedDate, getFullName } from "../../utils";
+import { generateUserId, getFormattedDate, getFullName } from "../../utils";
 import { User } from "../../types/User";
 import useAuth from "../../hooks/Auth";
 import ConfirmModel from "../../Components/ConfirmModel";
@@ -140,7 +140,7 @@ const Users = () => {
         <PageLoader />
       ) : (
         <React.Fragment>
-          <div className="mb-4 flex items-center justify-between p-4">
+          <div className="mb-4 flex items-center justify-between p-4 pb-0">
             <div>Users ({totalUsers})</div>
             <CustomButton
               type="button"
@@ -175,7 +175,9 @@ const Users = () => {
                     className="bg-white dark:border-gray-700 dark:bg-gray-800"
                   >
                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                      #{user.id}
+                      <Badge className="w-min" color="indigo">
+                        {generateUserId(user)}
+                      </Badge>
                     </Table.Cell>
                     <Table.Cell>
                       <div className="flex items-center gap-2">

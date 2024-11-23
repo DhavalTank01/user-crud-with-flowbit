@@ -7,8 +7,10 @@ import { useState } from "react";
 import axiosInstance from "../../axios";
 import toast from "react-hot-toast";
 import URLS from "../../Routes";
-import { logout } from "../../redux/slice/userSlice";
+import { logout, setCurrentUser } from "../../redux/slice/userSlice";
 import { APIS } from "../../axios/apis";
+import CustomSelect from "../CustomSelect";
+import { USER_ACTIVITY_STATUS } from "../../constants";
 
 function Header() {
   const { user, isAuthenticated } = useSelector((state: any) => state.auth);
@@ -16,6 +18,7 @@ function Header() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState({
     logout: false,
+    updateActivityStatus: false,
   });
   const handleLogout = async () => {
     try {
@@ -34,6 +37,30 @@ function Header() {
       toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
       setIsLoading({ ...isLoading, logout: false });
+    }
+  };
+
+  const handleActivityStatusChange = async (e: any) => {
+    try {
+      setIsLoading({ ...isLoading, updateActivityStatus: true });
+      let payload = {
+        activity_status: e?.target?.value,
+      };
+      let response = await axiosInstance.put(
+        APIS.UPDATE_USER_ACTIVE_STATUS(user?.id),
+        payload,
+      );
+      if (response?.status === 200) {
+        toast.success(response?.data?.message);
+        dispatch(setCurrentUser(response?.data?.user));
+      } else {
+        toast.error(response?.data?.message || "Something went wrong");
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setIsLoading({ ...isLoading, updateActivityStatus: false });
     }
   };
 
@@ -58,6 +85,20 @@ function Header() {
                 {user?.email}
               </span>
             </Dropdown.Header>
+            <Dropdown.Item disabled>
+              <CustomSelect
+                selectClassName="mb-0"
+                parentClassName="w-full"
+                value={user?.activity_status}
+                options={USER_ACTIVITY_STATUS}
+                name="activity_status"
+                id="activity_status"
+                label=""
+                onChange={handleActivityStatusChange}
+                disabled={isLoading.updateActivityStatus}
+              />
+            </Dropdown.Item>
+            <Dropdown.Divider />
             <Dropdown.Item
               disabled={isLoading.logout}
               onClick={() => navigate(URLS.Dashboard)}

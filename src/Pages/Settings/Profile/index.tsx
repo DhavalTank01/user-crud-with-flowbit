@@ -14,8 +14,6 @@ import { setCurrentUser } from "../../../redux/slice/userSlice";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import CustomUserRoleBadge from "../../../Components/CustomUserRoleBadge";
 import CustomUserStatusBadge from "../../../Components/CustomUserStatusBadge";
-import CustomSelect from "../../../Components/CustomSelect";
-import { USER_ACTIVITY_STATUS } from "../../../constants";
 
 const MyProfile = () => {
   const dispatch = useDispatch();
@@ -96,31 +94,6 @@ const MyProfile = () => {
       phone_number: userDetails?.phone_number,
       dob: new Date(userDetails?.dob).toString(),
     });
-  };
-
-  const handleActivityStatusChange = async (e: any) => {
-    try {
-      setIsLoading({ ...isLoading, updateActivityStatus: true });
-      let payload = {
-        activity_status: e?.target?.value,
-      };
-      let response = await axiosInstance.put(
-        APIS.UPDATE_USER_ACTIVE_STATUS(userDetails?.id),
-        payload,
-      );
-      if (response?.status === 200) {
-        toast.success(response?.data?.message);
-        setUserDetails(response?.data?.user);
-        dispatch(setCurrentUser(response?.data?.user));
-      } else {
-        toast.error(response?.data?.message || "Something went wrong");
-      }
-    } catch (error: any) {
-      console.error(error);
-      toast.error(error?.response?.data?.message || "Something went wrong");
-    } finally {
-      setIsLoading({ ...isLoading, updateActivityStatus: false });
-    }
   };
 
   useEffect(() => {
@@ -243,17 +216,6 @@ const MyProfile = () => {
                     <CustomUserStatusBadge user={userDetails} />
                   </div>
                 </div>
-              </div>
-              <div>
-                <CustomSelect
-                  value={userDetails?.activity_status as string}
-                  options={USER_ACTIVITY_STATUS}
-                  name="activity_status"
-                  id="activity_status"
-                  label="Activity Status"
-                  onChange={handleActivityStatusChange}
-                  disabled={isLoading.updateActivityStatus}
-                />
               </div>
             </div>
           </div>

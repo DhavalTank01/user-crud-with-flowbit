@@ -103,6 +103,15 @@ const classNames = (...classes: (string | undefined)[]): string => {
   return classes?.filter(Boolean).join(" ");
 };
 
+const generateUserId = (user: User) => {
+  let id = user?.id;
+  if (!id) {
+    return "#0000";
+  } else {
+    return `#${id.toString().padStart(4, "0")}`;
+  }
+};
+
 export {
   getCookie,
   setCookie,
@@ -111,4 +120,5 @@ export {
   convertTextCase,
   getFormattedDate,
   classNames,
+  generateUserId,
 };

@@ -12,11 +12,11 @@ const APIS = {
   GET_USER_BY_TOKEN: "/auth/user-details", // GET
   GET_ALL_USERS: "/user", // GET
   CREATE_USER: "/user", // POST
-  UPDATE_USER: (userId: number) => `/user/${userId}`, // PUT
+  UPDATE_USER: (userId: string | number) => `/user/${userId}`, // PUT
   UPDATE_USER_ACTIVE_STATUS: (userId: number) =>
     `/user/activity-status/${userId}`, // PUT
   DELETE_USER: (userId: number) => `/user/${userId}`, // DELETE
-  GET_USER: (userId: number) => `/user/${userId}`, // GET
+  GET_USER: (userId: string) => `/user/${userId}`, // GET
   UPDATE_USER_STATUS: (userId: number) => `/user/toggle-status/${userId}`, // PUT
   CHECK_UNIQUE_EMAIL: "/auth/check-unique-email", // POST
 };

@@ -169,6 +169,7 @@ const AddUser = () => {
               type="button"
               color="light"
               onClick={handleCancelClick}
+              disabled={formik.isSubmitting}
             >
               Cancel
             </CustomButton>
