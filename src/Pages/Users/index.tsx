@@ -187,6 +187,7 @@ const Users = () => {
       role: "",
       is_disabled: "",
       page: 1,
+      search: "",
     });
   };
 
@@ -241,7 +242,11 @@ const Users = () => {
               <CustomButton
                 type="button"
                 onClick={() => resetFilters()}
-                disabled={!queryParams?.role && !queryParams?.is_disabled}
+                disabled={
+                  !queryParams?.role &&
+                  !queryParams?.is_disabled &&
+                  !queryParams?.search
+                }
               >
                 <div className="flex items-center gap-2">
                   <span>Reset</span>
