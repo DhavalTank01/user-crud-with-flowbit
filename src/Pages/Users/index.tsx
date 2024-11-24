@@ -28,6 +28,7 @@ import SortableHeader from "../../Components/SortableHeader";
 import DebouncedSearch from "../../Components/DebouncedSearch";
 import CustomSelect from "../../Components/CustomSelect";
 import { USER_ROLES, USER_STATUS } from "../../constants";
+import { FcClearFilters } from "react-icons/fc";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -180,6 +181,15 @@ const Users = () => {
     setQueryParams((prev) => ({ ...prev, search: searchTerm, page: 1 }));
   };
 
+  const resetFilters = () => {
+    setQueryParams({
+      ...queryParams,
+      role: "",
+      is_disabled: "",
+      page: 1,
+    });
+  };
+
   return (
     <div>
       <CustomBreadcrumb pageTitle="Users" />
@@ -189,7 +199,7 @@ const Users = () => {
         <React.Fragment>
           <div className="mb-4 flex items-center justify-between p-4 pb-0">
             <div>Users ({totalUsers})</div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-end gap-2">
               <div className="w-full">
                 <DebouncedSearch
                   value={queryParams?.search}
@@ -228,6 +238,16 @@ const Users = () => {
                 }}
                 label="Filter by Status"
               />
+              <CustomButton
+                type="button"
+                onClick={() => resetFilters()}
+                disabled={!queryParams?.role && !queryParams?.is_disabled}
+              >
+                <div className="flex items-center gap-2">
+                  <span>Reset</span>
+                  <FcClearFilters />
+                </div>
+              </CustomButton>
             </div>
             <CustomButton
               type="button"
