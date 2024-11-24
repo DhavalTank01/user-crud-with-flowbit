@@ -1,5 +1,3 @@
-import React from "react";
-import ComingSoon from "../../../Components/ComingSoon";
 import CustomBreadcrumb from "../../../Components/CustomBreadcrumb";
 import toast from "react-hot-toast";
 import { APIS } from "../../../axios/apis";
