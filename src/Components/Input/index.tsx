@@ -57,7 +57,7 @@ const Input = ({
         value={value}
         disabled={disabled}
         autoComplete="off"
-        color={error ? "failure" : "default"}
+        color={error ? "failure" : undefined}
         helperText={convertTextCase(helperText, "errorMessage")}
         {...rest}
       />

@@ -8,7 +8,12 @@ import axiosInstance from "../../axios";
 import { APIS } from "../../axios/apis";
 import toast from "react-hot-toast";
 import UserAvatar from "../../Components/UserAvatar";
-import { generateUserId, getFormattedDate, getFullName } from "../../utils";
+import {
+  generateUserId,
+  getFormattedDate,
+  getFullName,
+  highlightText,
+} from "../../utils";
 import { User } from "../../types/User";
 import useAuth from "../../hooks/Auth";
 import ConfirmModel from "../../Components/ConfirmModel";
@@ -300,60 +305,81 @@ const Users = () => {
               </Table.Head>
               <Table.Body className="divide-y">
                 {/* Table rows */}
-                {users.map((user: User, index: number) => (
-                  <Table.Row
-                    key={index}
-                    className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                  >
-                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                      <Badge className="w-min" color="indigo">
-                        {generateUserId(user)}
-                      </Badge>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="flex items-center gap-2">
-                        <UserAvatar user={user} />
-                        <div>{getFullName(user)}</div>
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>{user.email}</Table.Cell>
-                    <Table.Cell>{user.phone_number}</Table.Cell>
-                    <Table.Cell>
-                      <CustomUserRoleBadge user={user} />
-                    </Table.Cell>
-                    <Table.Cell>
-                      <ToggleSwitch
-                        disabled={currentUser?.id === user.id}
-                        checked={!user.is_disabled}
-                        onChange={() => handleToggleUserStatus(user)}
-                      />
-                    </Table.Cell>
-                    <Table.Cell>
-                      {getFormattedDate(
-                        user.last_login,
-                        "DD/MM/YYYY hh:mm:ss A",
-                      )}
-                    </Table.Cell>
-                    <Table.Cell>
-                      <div className="flex gap-4 align-middle">
-                        <CustomIconButton
-                          onClick={() => handleEditClick(user)}
-                          className="text-blue-500 hover:text-blue-700"
+                {users?.length ? (
+                  users.map((user: User, index: number) => (
+                    <Table.Row
+                      key={index}
+                      className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                    >
+                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                        <Badge className="w-min" color="indigo">
+                          {generateUserId(user)}
+                        </Badge>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <div className="flex items-center gap-2">
+                          <UserAvatar user={user} />
+                          <div>
+                            {highlightText(
+                              getFullName(user),
+                              queryParams?.search,
+                            )}
+                          </div>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell>
+                        {highlightText(user.email, queryParams?.search)}
+                      </Table.Cell>
+                      <Table.Cell>
+                        {highlightText(user.phone_number, queryParams?.search)}
+                      </Table.Cell>
+                      <Table.Cell>
+                        <CustomUserRoleBadge user={user} />
+                      </Table.Cell>
+                      <Table.Cell>
+                        <ToggleSwitch
                           disabled={currentUser?.id === user.id}
-                        >
-                          <MdEdit />
-                        </CustomIconButton>
-                        <CustomIconButton
-                          disabled={currentUser?.id === user.id}
-                          onClick={() => handleDeleteClick(user)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <MdDelete />
-                        </CustomIconButton>
-                      </div>
+                          checked={!user.is_disabled}
+                          onChange={() => handleToggleUserStatus(user)}
+                        />
+                      </Table.Cell>
+                      <Table.Cell>
+                        {getFormattedDate(
+                          user.last_login,
+                          "DD/MM/YYYY hh:mm:ss A",
+                        )}
+                      </Table.Cell>
+                      <Table.Cell>
+                        <div className="flex gap-4 align-middle">
+                          <CustomIconButton
+                            onClick={() => handleEditClick(user)}
+                            className="text-blue-500 hover:text-blue-700"
+                            disabled={currentUser?.id === user.id}
+                          >
+                            <MdEdit />
+                          </CustomIconButton>
+                          <CustomIconButton
+                            disabled={currentUser?.id === user.id}
+                            onClick={() => handleDeleteClick(user)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <MdDelete />
+                          </CustomIconButton>
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))
+                ) : (
+                  <Table.Row>
+                    <Table.Cell
+                      height={300}
+                      colSpan={10}
+                      className="text-center"
+                    >
+                      <div>No Users Found</div>
                     </Table.Cell>
                   </Table.Row>
-                ))}
+                )}
               </Table.Body>
             </Table>
           </div>

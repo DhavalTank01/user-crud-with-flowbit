@@ -36,17 +36,15 @@ const DebouncedSearch: React.FC<DebouncedSearchProps> = ({
   );
 
   return (
-    <div className="w-50">
-      <Input
-        name="search"
-        value={searchTerm}
-        onChange={debouncedOnChange}
-        placeholder="Search..."
-        type="search"
-        id="search"
-        label="Search"
-      />
-    </div>
+    <Input
+      type="text"
+      name="search"
+      id="search"
+      placeholder="Search..."
+      value={searchTerm}
+      onChange={debouncedOnChange}
+      label="Search"
+    />
   );
 };
 

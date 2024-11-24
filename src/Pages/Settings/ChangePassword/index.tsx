@@ -27,9 +27,7 @@ const ChangePassword = () => {
     },
     enableReinitialize: true,
     validationSchema: Yup.object().shape({
-      current_password: Yup.string()
-        .min(8, "Password must be at least 8 characters long")
-        .required(),
+      current_password: Yup.string().required(),
       new_password: Yup.string()
         .min(8, "Password must be at least 8 characters long")
         .required(),
