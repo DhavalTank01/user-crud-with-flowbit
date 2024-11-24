@@ -41,9 +41,11 @@ const Input = ({
 
   return (
     <div className="relative">
-      <div className="mb-2 block">
-        <Label htmlFor={id} value={label} />
-      </div>
+      {label ? (
+        <div className={"mb-2 block"}>
+          <Label htmlFor={id} value={label} />
+        </div>
+      ) : null}
       <TextInput
         id={id}
         name={name}
@@ -55,7 +57,7 @@ const Input = ({
         value={value}
         disabled={disabled}
         autoComplete="off"
-        color={error ? "failure" : "default"}
+        color={error ? "failure" : undefined}
         helperText={convertTextCase(helperText, "errorMessage")}
         {...rest}
       />

@@ -92,7 +92,7 @@ const getFormattedDate = (
   inputFormat: string = "YYYY-MM-DDTHH:mm:ss.SSSZ",
 ): string | undefined => {
   if (!date) {
-    return undefined;
+    return "-";
   }
 
   const dateObj = moment(date, inputFormat);
@@ -103,6 +103,32 @@ const classNames = (...classes: (string | undefined)[]): string => {
   return classes?.filter(Boolean).join(" ");
 };
 
+const generateUserId = (user: User) => {
+  let id = user?.id;
+  if (!id) {
+    return "#0000";
+  } else {
+    return `#${id.toString().padStart(4, "0")}`;
+  }
+};
+
+const highlightText = (text: string, searchTerm: string) => {
+  if (!searchTerm) return text;
+
+  const regex = new RegExp(`(${searchTerm})`, "gi");
+  const parts = text.split(regex);
+
+  return parts.map((part, index) =>
+    part.toLowerCase() === searchTerm.toLowerCase() ? (
+      <span key={index} style={{ backgroundColor: "yellow" }}>
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+};
+
 export {
   getCookie,
   setCookie,
@@ -111,4 +137,6 @@ export {
   convertTextCase,
   getFormattedDate,
   classNames,
+  generateUserId,
+  highlightText,
 };

@@ -6,11 +6,14 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axiosInstance from "../../../axios";
 import { APIS } from "../../../axios/apis";
-import { convertTextCase, getFormattedDate } from "../../../utils";
+import { getFormattedDate } from "../../../utils";
 import toast from "react-hot-toast";
 import { User } from "../../../types/User";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "../../../redux/slice/userSlice";
+import SingleDatePicker from "../../../Components/SingleDatePicker";
+import CustomUserRoleBadge from "../../../Components/CustomUserRoleBadge";
+import CustomUserStatusBadge from "../../../Components/CustomUserStatusBadge";
 
 const MyProfile = () => {
   const dispatch = useDispatch();
@@ -18,12 +21,14 @@ const MyProfile = () => {
   const [userDetails, setUserDetails] = useState({} as User);
   const [isLoading, setIsLoading] = useState({
     pageLoading: true,
+    updateActivityStatus: false,
   });
   const formik = useFormik({
     initialValues: {
       first_name: "",
       last_name: "",
       phone_number: "",
+      dob: "",
     },
     enableReinitialize: true,
     onSubmit: async (values) => {
@@ -32,6 +37,7 @@ const MyProfile = () => {
           first_name: values?.first_name,
           last_name: values?.last_name,
           phone_number: values?.phone_number,
+          dob: getFormattedDate(values?.dob, "YYYY-MM-DD"),
         };
         let response = await axiosInstance.put(
           APIS.UPDATE_USER(userDetails?.id),
@@ -55,6 +61,7 @@ const MyProfile = () => {
       first_name: Yup.string().required(),
       last_name: Yup.string().required(),
       phone_number: Yup.string().required(),
+      dob: Yup.string().required(),
     }),
   });
 
@@ -68,6 +75,7 @@ const MyProfile = () => {
           first_name: user?.first_name,
           last_name: user?.last_name,
           phone_number: user?.phone_number,
+          dob: new Date(user?.dob).toString(),
         });
         setUserDetails(user);
       }
@@ -84,6 +92,7 @@ const MyProfile = () => {
       first_name: userDetails?.first_name,
       last_name: userDetails?.last_name,
       phone_number: userDetails?.phone_number,
+      dob: new Date(userDetails?.dob).toString(),
     });
   };
 
@@ -92,9 +101,9 @@ const MyProfile = () => {
   }, []);
 
   return (
-    <div className="my-profile-container">
+    <div className="">
       <CustomBreadcrumb pageTitle="Settings" pageSubTitle="My Profile" />
-      <div className="content-wrapper">
+      <div className="">
         {isEditing ? (
           <form onSubmit={formik.handleSubmit} className="p-4">
             <div className="mb-4 flex w-60 flex-col flex-wrap justify-start gap-4">
@@ -130,6 +139,21 @@ const MyProfile = () => {
                 onBlur={formik.handleBlur}
                 error={Boolean(formik.errors.phone_number)}
                 helperText={formik.errors.phone_number}
+              />
+              <SingleDatePicker
+                label="Date of Birth"
+                name="dob"
+                id="dob"
+                value={
+                  !!formik.values.dob ? new Date(formik.values.dob) : new Date()
+                }
+                onChange={(e: any) => {
+                  formik.setFieldValue("dob", e);
+                }}
+                onBlur={formik.handleBlur}
+                maxDate={new Date()}
+                error={!!formik.errors.dob}
+                helperText={formik.errors.dob}
               />
             </div>
             <CustomButton
@@ -176,14 +200,21 @@ const MyProfile = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="mb-2">
+                  <div className="mb-2 flex gap-2">
+                    <strong>Last Login:</strong>{" "}
+                    {getFormattedDate(
+                      userDetails.last_login,
+                      "DD/MM/YYYY hh:mm:ss A",
+                    )}
+                  </div>
+                  <div className="mb-2 flex gap-2">
                     <strong>Role:</strong>{" "}
-                    {convertTextCase(userDetails.role, "titlecase")}
-                  </p>
-                  <p className="mb-2">
+                    <CustomUserRoleBadge user={userDetails} />
+                  </div>
+                  <div className="mb-2 flex gap-2">
                     <strong>Status:</strong>{" "}
-                    {userDetails.is_disabled ? "Disabled" : "Active"}
-                  </p>
+                    <CustomUserStatusBadge user={userDetails} />
+                  </div>
                 </div>
               </div>
             </div>

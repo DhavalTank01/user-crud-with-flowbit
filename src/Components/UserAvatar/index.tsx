@@ -51,6 +51,7 @@ const UserAvatar = ({ user }: { user: User }) => {
       placeholderInitials={stringAvatar(getFullName(user))}
       style={avatarStyle}
       rounded
+      status={user?.activity_status || "offline"}
     />
   );
 };

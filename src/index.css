@@ -8,3 +8,12 @@
 .data-table thead tr th {
   @apply sticky top-0 z-10  bg-white !important;
 }
+
+.data-table thead tr th,
+.data-table tbody tr td {
+  @apply px-2 py-2;
+}
+
+.active-page-title span {
+  color: #374151;
+}

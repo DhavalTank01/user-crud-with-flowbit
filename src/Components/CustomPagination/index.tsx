@@ -6,7 +6,7 @@ const CustomPagination = ({
   itemsPerPage,
   currentPage,
   handleItemsPerPageChange,
-  rowsOptions = [25, 50, 100],
+  rowsOptions = [10, 25, 50, 100],
 }: any) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -18,16 +18,12 @@ const CustomPagination = ({
         </label>
         <select
           id="itemsPerPage"
-          value={itemsPerPage}
+          value={itemsPerPage} // Controlled select
           onChange={handleItemsPerPageChange}
           className="rounded-md border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500"
         >
           {rowsOptions.map((option: number) => (
-            <option
-              key={option}
-              value={option}
-              selected={option === itemsPerPage}
-            >
+            <option key={option} value={option}>
               {option}
             </option>
           ))}
