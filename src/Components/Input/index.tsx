@@ -41,9 +41,11 @@ const Input = ({
 
   return (
     <div className="relative">
-      <div className="mb-2 block">
-        <Label htmlFor={id} value={label} />
-      </div>
+      {label ? (
+        <div className={"mb-2 block"}>
+          <Label htmlFor={id} value={label} />
+        </div>
+      ) : null}
       <TextInput
         id={id}
         name={name}

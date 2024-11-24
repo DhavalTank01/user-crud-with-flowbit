@@ -87,13 +87,11 @@ function Header() {
             </Dropdown.Header>
             <Dropdown.Item disabled>
               <CustomSelect
-                selectClassName="mb-0"
                 parentClassName="w-full"
                 value={user?.activity_status}
                 options={USER_ACTIVITY_STATUS}
                 name="activity_status"
                 id="activity_status"
-                label=""
                 onChange={handleActivityStatusChange}
                 disabled={isLoading.updateActivityStatus}
               />

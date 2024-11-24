@@ -34,6 +34,36 @@ const CLIENT_PAGES = [
   URLS.Profile,
 ];
 
+const USER_ROLES = [
+  {
+    value: "all",
+    label: "All",
+  },
+  {
+    value: "admin",
+    label: "Admin",
+  },
+  {
+    value: "client",
+    label: "Client",
+  },
+];
+
+const USER_STATUS = [
+  {
+    value: "all",
+    label: "All",
+  },
+  {
+    value: "false",
+    label: "Active",
+  },
+  {
+    value: "true",
+    label: "Disabled",
+  },
+];
+
 const USER_ACTIVITY_STATUS = [
   {
     value: "online",
@@ -53,4 +83,11 @@ const USER_ACTIVITY_STATUS = [
   },
 ];
 
-export { DEFAULT_SIDE_BAR, ADMIN_SIDE_BAR, CLIENT_PAGES, USER_ACTIVITY_STATUS };
+export {
+  DEFAULT_SIDE_BAR,
+  ADMIN_SIDE_BAR,
+  CLIENT_PAGES,
+  USER_ACTIVITY_STATUS,
+  USER_ROLES,
+  USER_STATUS,
+};

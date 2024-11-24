@@ -6,7 +6,7 @@ const CustomPagination = ({
   itemsPerPage,
   currentPage,
   handleItemsPerPageChange,
-  rowsOptions = [25, 50, 100],
+  rowsOptions = [10, 25, 50, 100],
 }: any) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 

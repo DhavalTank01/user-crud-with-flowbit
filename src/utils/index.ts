@@ -92,7 +92,7 @@ const getFormattedDate = (
   inputFormat: string = "YYYY-MM-DDTHH:mm:ss.SSSZ",
 ): string | undefined => {
   if (!date) {
-    return undefined;
+    return "-";
   }
 
   const dateObj = moment(date, inputFormat);

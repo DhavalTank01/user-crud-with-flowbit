@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomBreadcrumb from "../../Components/CustomBreadcrumb";
 import { Badge, Table, ToggleSwitch } from "flowbite-react";
 import CustomPagination from "../../Components/CustomPagination";
@@ -19,11 +19,13 @@ import URLS from "../../Routes";
 import { useNavigate } from "react-router-dom";
 import { HiUserAdd } from "react-icons/hi";
 import CustomUserRoleBadge from "../../Components/CustomUserRoleBadge";
+import SortableHeader from "../../Components/SortableHeader";
+import DebouncedSearch from "../../Components/DebouncedSearch";
+import CustomSelect from "../../Components/CustomSelect";
+import { USER_ROLES, USER_STATUS } from "../../constants";
 
 const Users = () => {
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(25);
   const [users, setUsers] = useState([] as User[]);
   const [totalUsers, setTotalUsers] = useState(0);
   const currentUser = useAuth()?.getUserAndToken()?.user as User;
@@ -38,37 +40,73 @@ const Users = () => {
     type: "",
   });
 
+  const [queryParams, setQueryParams] = useState({
+    search: "",
+    sortOrder: "asc",
+    sortBy: "id",
+    page: 1,
+    limit: 10,
+    role: "",
+    filter_by: "",
+    is_disabled: "",
+  });
+
+  // Fetch users whenever queryParams changes
   useEffect(() => {
-    getUsers();
-  }, []);
+    const fetchUsers = async () => {
+      try {
+        setIsLoading((prev) => ({ ...prev, pageLoading: true }));
+        const payload: {
+          page: number;
+          limit: number;
+          search: string;
+          sortOrder: string;
+          sortBy: string;
+          role?: string;
+          filter_by?: string;
+          is_disabled?: string;
+        } = {
+          page: queryParams.page,
+          limit: queryParams.limit,
+          search: queryParams.search,
+          sortOrder: queryParams.sortOrder,
+          sortBy: queryParams.sortBy,
+        };
+
+        if (queryParams.role && queryParams.role !== "all") {
+          payload.role = queryParams.role;
+        }
+
+        if (queryParams.is_disabled && queryParams.is_disabled !== "all") {
+          payload.is_disabled = queryParams.is_disabled;
+        }
+
+        const response = await axiosInstance.post(APIS.GET_ALL_USERS, payload);
+        if (response.status === 200) {
+          setUsers(response.data?.users);
+          setTotalUsers(response.data?.totalCount);
+        }
+      } catch (error: any) {
+        console.error(error);
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      } finally {
+        setIsLoading((prev) => ({ ...prev, pageLoading: false }));
+      }
+    };
+
+    fetchUsers(); // Call the function inside the useEffect
+  }, [queryParams]);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    setQueryParams({ ...queryParams, page });
   };
 
   const handleItemsPerPageChange = (
     event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const newItemsPerPage = parseInt(event.target.value);
-    setItemsPerPage(newItemsPerPage);
-    setCurrentPage(1);
+    setQueryParams({ ...queryParams, limit: newItemsPerPage, page: 1 });
   };
-
-  const getUsers = useCallback(async () => {
-    try {
-      setIsLoading({ ...isLoading, pageLoading: true });
-      let response = await axiosInstance.get(APIS.GET_ALL_USERS);
-      if (response?.status === 200) {
-        setUsers(response?.data?.users);
-        setTotalUsers(response?.data?.totalCount);
-      }
-    } catch (error: any) {
-      console.error(error);
-      toast.error(error?.response?.data?.message || "Something went wrong");
-    } finally {
-      setIsLoading({ ...isLoading, pageLoading: false });
-    }
-  }, []);
 
   const handleEditClick = (user: User) => {
     navigate(`${URLS.EditUser}/${user.id}`);
@@ -133,6 +171,10 @@ const Users = () => {
     });
   };
 
+  const handleSearch = (searchTerm: string) => {
+    setQueryParams((prev) => ({ ...prev, search: searchTerm, page: 1 }));
+  };
+
   return (
     <div>
       <CustomBreadcrumb pageTitle="Users" />
@@ -142,6 +184,46 @@ const Users = () => {
         <React.Fragment>
           <div className="mb-4 flex items-center justify-between p-4 pb-0">
             <div>Users ({totalUsers})</div>
+            <div className="flex items-center gap-2">
+              <div className="w-full">
+                <DebouncedSearch
+                  value={queryParams?.search}
+                  onChange={(searchTerm: string) => handleSearch(searchTerm)}
+                />
+              </div>
+              <CustomSelect
+                parentClassName="w-full"
+                value={queryParams?.role}
+                options={USER_ROLES}
+                name="role"
+                id="role"
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  setQueryParams({
+                    ...queryParams,
+                    role: e.target.value,
+                    page: 1,
+                    filter_by: "role",
+                  });
+                }}
+                label="Filter by Role"
+              />
+              <CustomSelect
+                parentClassName="w-full"
+                value={queryParams?.is_disabled}
+                options={USER_STATUS}
+                name="is_disabled"
+                id="is_disabled"
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  setQueryParams({
+                    ...queryParams,
+                    filter_by: "is_disabled",
+                    page: 1,
+                    is_disabled: e.target.value,
+                  });
+                }}
+                label="Filter by Status"
+              />
+            </div>
             <CustomButton
               type="button"
               color="light"
@@ -158,13 +240,62 @@ const Users = () => {
           <div className="max-h-[500px] overflow-y-auto">
             <Table className="data-table" hoverable>
               <Table.Head>
-                <Table.HeadCell>User ID</Table.HeadCell>
-                <Table.HeadCell>Full Name</Table.HeadCell>
-                <Table.HeadCell>Email</Table.HeadCell>
-                <Table.HeadCell>Phone Number</Table.HeadCell>
-                <Table.HeadCell>Role</Table.HeadCell>
-                <Table.HeadCell>Status</Table.HeadCell>
-                <Table.HeadCell>Last login</Table.HeadCell>
+                <SortableHeader
+                  label="User ID"
+                  sortKey="id"
+                  currentSort={queryParams}
+                  onSortChange={(sortBy, sortOrder) =>
+                    setQueryParams({ ...queryParams, sortBy, sortOrder })
+                  }
+                />
+                <SortableHeader
+                  label="Full Name"
+                  sortKey="first_name"
+                  currentSort={queryParams}
+                  onSortChange={(sortBy, sortOrder) =>
+                    setQueryParams({ ...queryParams, sortBy, sortOrder })
+                  }
+                />
+                <SortableHeader
+                  label="Email"
+                  sortKey="email"
+                  currentSort={queryParams}
+                  onSortChange={(sortBy, sortOrder) =>
+                    setQueryParams({ ...queryParams, sortBy, sortOrder })
+                  }
+                />
+                <SortableHeader
+                  label="Phone Number"
+                  sortKey="phone_number"
+                  currentSort={queryParams}
+                  onSortChange={(sortBy, sortOrder) =>
+                    setQueryParams({ ...queryParams, sortBy, sortOrder })
+                  }
+                />
+                <SortableHeader
+                  label="Role"
+                  sortKey="role"
+                  currentSort={queryParams}
+                  onSortChange={(sortBy, sortOrder) =>
+                    setQueryParams({ ...queryParams, sortBy, sortOrder })
+                  }
+                />
+                <SortableHeader
+                  label="Status"
+                  sortKey="is_disabled"
+                  currentSort={queryParams}
+                  onSortChange={(sortBy, sortOrder) =>
+                    setQueryParams({ ...queryParams, sortBy, sortOrder })
+                  }
+                />
+                <SortableHeader
+                  label="Last Login"
+                  sortKey="last_login"
+                  currentSort={queryParams}
+                  onSortChange={(sortBy, sortOrder) =>
+                    setQueryParams({ ...queryParams, sortBy, sortOrder })
+                  }
+                />
                 <Table.HeadCell>Actions</Table.HeadCell>
               </Table.Head>
               <Table.Body className="divide-y">
@@ -223,16 +354,15 @@ const Users = () => {
                     </Table.Cell>
                   </Table.Row>
                 ))}
-                {/* Add additional rows as needed */}
               </Table.Body>
             </Table>
           </div>
           <CustomPagination
-            totalItems={100}
+            totalItems={totalUsers}
             onPageChange={handlePageChange}
             handleItemsPerPageChange={handleItemsPerPageChange}
-            currentPage={currentPage}
-            itemsPerPage={itemsPerPage}
+            currentPage={queryParams.page}
+            itemsPerPage={queryParams.limit}
           />
           <ConfirmModel
             isShow={modelDetails?.isShow}

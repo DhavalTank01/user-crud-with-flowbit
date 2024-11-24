@@ -10,8 +10,8 @@ const APIS = {
   LOGIN_WITH_OTP: "/auth/login-with-otp", // POST
   GET_CURRENT_USER: "/auth/me", // GET
   GET_USER_BY_TOKEN: "/auth/user-details", // GET
-  GET_ALL_USERS: "/user", // GET
-  CREATE_USER: "/user", // POST
+  GET_ALL_USERS: "/user", // POST
+  CREATE_USER: "/user/add", // POST
   UPDATE_USER: (userId: string | number) => `/user/${userId}`, // PUT
   UPDATE_USER_ACTIVE_STATUS: (userId: number) =>
     `/user/activity-status/${userId}`, // PUT
