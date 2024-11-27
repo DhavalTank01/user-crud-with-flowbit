@@ -192,14 +192,28 @@ const Users = () => {
   };
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <CustomBreadcrumb pageTitle="Users" />
       {isLoading.pageLoading ? (
         <PageLoader />
       ) : (
         <React.Fragment>
-          <div className="mb-4 flex items-center justify-between p-4 pb-0">
-            <div>Users ({totalUsers})</div>
+          <div className="sticky top-0 z-10 bg-white p-4">
+            <div className="flex items-center justify-between">
+              <div>Users ({totalUsers})</div>
+              <CustomButton
+                type="button"
+                color="light"
+                onClick={() => {
+                  navigate(URLS.AddUser);
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <span>Add User</span>
+                  <HiUserAdd />
+                </div>
+              </CustomButton>
+            </div>
             <div className="flex items-end gap-2">
               <div className="w-full">
                 <DebouncedSearch
@@ -243,9 +257,11 @@ const Users = () => {
                 type="button"
                 onClick={() => resetFilters()}
                 disabled={
-                  !queryParams?.role &&
-                  !queryParams?.is_disabled &&
-                  !queryParams?.search
+                  (!queryParams?.role &&
+                    !queryParams?.is_disabled &&
+                    !queryParams?.search) ||
+                  queryParams?.role === "all" ||
+                  queryParams?.is_disabled === "all"
                 }
               >
                 <div className="flex items-center gap-2">
@@ -254,22 +270,10 @@ const Users = () => {
                 </div>
               </CustomButton>
             </div>
-            <CustomButton
-              type="button"
-              color="light"
-              onClick={() => {
-                navigate(URLS.AddUser);
-              }}
-            >
-              <div className="flex items-center gap-2">
-                <span>Add User</span>
-                <HiUserAdd />
-              </div>
-            </CustomButton>
           </div>
-          <div className="max-h-[500px] overflow-y-auto">
-            <Table className="data-table" hoverable>
-              <Table.Head>
+          <div className="relative max-h-[500px] overflow-auto">
+            <Table className="data-table">
+              <Table.Head className="sticky top-0 z-10 bg-white shadow-md">
                 <SortableHeader
                   label="User ID"
                   sortKey="id"
