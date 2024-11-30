@@ -71,6 +71,14 @@ const Login = () => {
       <form
         className="flex w-[500px] flex-col gap-4"
         onSubmit={formik.handleSubmit}
+        onKeyDown={(event) => {
+          if (
+            event.key === "Enter" &&
+            (event.target as HTMLElement).tagName !== "BUTTON"
+          ) {
+            event.preventDefault();
+          }
+        }}
       >
         <div className="text-center text-xl">Login</div>
         <Input
