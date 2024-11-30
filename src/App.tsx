@@ -26,6 +26,7 @@ import { getCookie } from "./utils";
 import secureLocalStorage from "react-secure-storage";
 import { useDispatch } from "react-redux";
 import useAuth from "./hooks/Auth";
+import Roles from "./Pages/Roles";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -215,7 +216,7 @@ const App = () => {
       <Route
         path={URLS.AddUser}
         element={
-          <PrivateRoute>
+          <PrivateRoute path={URLS.AddUser}>
             <SidebarWrapper>
               <AddUser />
             </SidebarWrapper>
@@ -225,9 +226,19 @@ const App = () => {
       <Route
         path={`${URLS.EditUser}/:id`}
         element={
-          <PrivateRoute>
+          <PrivateRoute path={`${URLS.EditUser}/:id`}>
             <SidebarWrapper>
               <EditUser />
+            </SidebarWrapper>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path={URLS.Roles}
+        element={
+          <PrivateRoute path={URLS.Roles}>
+            <SidebarWrapper>
+              <Roles />
             </SidebarWrapper>
           </PrivateRoute>
         }

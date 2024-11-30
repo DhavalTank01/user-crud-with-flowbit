@@ -200,7 +200,7 @@ const Users = () => {
         <React.Fragment>
           <div className="sticky top-0 z-10 bg-white p-4">
             <div className="flex items-center justify-between">
-              <div>Users ({totalUsers})</div>
+              <div>Users ({totalUsers || 0})</div>
               <CustomButton
                 type="button"
                 color="light"
@@ -342,7 +342,7 @@ const Users = () => {
                     >
                       <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                         <Badge className="w-min" color="indigo">
-                          {generateUserId(user)}
+                          {generateUserId(user.id)}
                         </Badge>
                       </Table.Cell>
                       <Table.Cell>
@@ -429,6 +429,7 @@ const Users = () => {
             rejectButtonText="Cancel"
             typeColorClass="text-red-500"
             approveButtonColor="failure"
+            isLoading={isLoading.deleteUser}
           />
         </React.Fragment>
       )}

@@ -19,6 +19,16 @@ const APIS = {
   GET_USER: (userId: string) => `/user/${userId}`, // GET
   UPDATE_USER_STATUS: (userId: number) => `/user/toggle-status/${userId}`, // PUT
   CHECK_UNIQUE_EMAIL: "/auth/check-unique-email", // POST
+
+  // Roles
+  GET_ALL_ROLES: "/role", // GET
+  CREATE_ROLE: "/role/add", // POST
+  UPDATE_ROLE: (roleId: string | number) => `/role/${roleId}`, // PUT
+  UPDATE_ROLE_ACTIVE_STATUS: (roleId: number) =>
+    `/role/activity-status/${roleId}`, // PUT
+  DELETE_ROLE: (roleId: number) => `/role/${roleId}`, // DELETE
+  GET_ROLE: (roleId: string) => `/role/${roleId}`, // GET
+  UPDATE_ROLE_STATUS: (roleId: number) => `/role/toggle-status/${roleId}`, // PUT
 };
 
 export { APIS };

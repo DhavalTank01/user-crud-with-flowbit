@@ -103,8 +103,7 @@ const classNames = (...classes: (string | undefined)[]): string => {
   return classes?.filter(Boolean).join(" ");
 };
 
-const generateUserId = (user: User) => {
-  let id = user?.id;
+const generateUserId = (id: number) => {
   if (!id) {
     return "#0000";
   } else {

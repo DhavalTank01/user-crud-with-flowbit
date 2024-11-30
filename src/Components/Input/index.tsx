@@ -16,6 +16,7 @@ interface InputPropsTypes {
   required?: boolean;
   error?: boolean;
   helperText?: string | undefined;
+  onFocus?: React.FocusEventHandler<HTMLInputElement> | undefined;
 }
 
 const Input = ({
@@ -27,6 +28,7 @@ const Input = ({
   placeholder,
   onChange,
   onBlur,
+  onFocus,
   disabled,
   required,
   error,
@@ -54,6 +56,7 @@ const Input = ({
         required={required}
         onChange={onChange}
         onBlur={onBlur}
+        onFocus={onFocus}
         value={value}
         disabled={disabled}
         autoComplete="off"
@@ -63,6 +66,7 @@ const Input = ({
       />
       {type === "password" && (
         <button
+          tabIndex={-1}
           type="button"
           onClick={togglePasswordVisibility}
           className="absolute right-3 top-11 flex items-center text-gray-500"
