@@ -13,6 +13,8 @@ import SingleDatePicker from "../../Components/SingleDatePicker";
 import CustomRadioGroup from "../../Components/CustomRadioGroup";
 import * as Yup from "yup";
 import { Label, ToggleSwitch } from "flowbite-react";
+import { Role } from "../../types/Role";
+import CustomSelect from "../../Components/CustomSelect";
 
 const EditUser = () => {
   const params = useParams();
@@ -22,12 +24,13 @@ const EditUser = () => {
     last_name: "",
     phone_number: "",
     dob: "",
-    role: "",
+    role_id: "",
     is_disabled: false,
   };
   const [isLoading, setIsLoading] = useState({
     pageLoading: true,
   });
+  const [roles, setRoles] = useState([] as Role[]);
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
@@ -36,6 +39,7 @@ const EditUser = () => {
       last_name: Yup.string().required(),
       phone_number: Yup.string().min(10).max(13).required(),
       dob: Yup.string().required(),
+      role_id: Yup.number().required("Role is required"),
     }),
     onSubmit: (values) => {
       updateUser(values);
@@ -71,7 +75,7 @@ const EditUser = () => {
           last_name: response?.data?.user?.last_name,
           phone_number: response?.data?.user?.phone_number,
           dob: new Date(response?.data?.user?.dob).toString(),
-          role: response?.data?.user?.role,
+          role_id: response?.data?.user?.role_id,
           is_disabled: response?.data?.user?.is_disabled,
         });
       } else {
@@ -91,6 +95,22 @@ const EditUser = () => {
 
   useEffect(() => {
     getUserById();
+  }, []);
+
+  const getRolesList = async () => {
+    try {
+      const response = await axiosInstance.get(APIS.GET_ROLE_LIST);
+      if (response.status === 200) {
+        setRoles(response.data.roles);
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  useEffect(() => {
+    getRolesList();
   }, []);
 
   return (
@@ -151,14 +171,25 @@ const EditUser = () => {
               error={!!formik.errors.dob}
               helperText={formik.errors.dob}
             />
-            <CustomRadioGroup
+            <CustomSelect
+              parentClassName="w-full"
+              value={formik.values.role_id}
+              options={roles?.map((role) => ({
+                value: role?.id,
+                label: role?.name,
+              }))}
               label="Role"
-              name="role"
-              items={["client", "admin"]}
-              value={formik.values.role}
+              name="role_id"
+              id="role_id"
               onChange={formik.handleChange}
-              error={!!formik.errors.role}
-              helperText={formik.errors.role}
+              onBlur={formik.handleBlur}
+              error={!!formik.errors.role_id && formik.touched.role_id}
+              helperText={
+                formik.errors.role_id && formik.touched.role_id
+                  ? formik.errors.role_id
+                  : ""
+              }
+              isAddEmptyOption={true}
             />
             <div>
               <Label className="mb-2 block" htmlFor="statusToggle">
@@ -166,9 +197,9 @@ const EditUser = () => {
               </Label>
               <ToggleSwitch
                 id="statusToggle"
-                checked={formik.values.is_disabled}
+                checked={!formik.values.is_disabled}
                 onChange={(checked: boolean) =>
-                  formik.setFieldValue("is_disabled", checked)
+                  formik.setFieldValue("is_disabled", !checked)
                 }
                 label={formik.values.is_disabled ? "Inactive" : "Active"}
               />

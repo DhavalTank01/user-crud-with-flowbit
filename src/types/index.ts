@@ -8,7 +8,7 @@ type CaseType =
   | "initialLetters";
 
 type OptionsTypes = {
-  value: string;
+  value: string | number;
   label: string;
 };
 

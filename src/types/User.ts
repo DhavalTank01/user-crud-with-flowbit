@@ -1,3 +1,5 @@
+import { Role } from "./Role";
+
 export interface User {
   id: number;
   email: string;
@@ -5,7 +7,7 @@ export interface User {
   last_name: string;
   phone_number: string;
   dob: string;
-  role: "client" | "admin";
+  role: Role;
   is_disabled: boolean;
   is_deleted: boolean;
   createdAt: string;
@@ -14,6 +16,7 @@ export interface User {
   profile_image?: string | null;
   profile_image_id?: string | null;
   activity_status?: "away" | "busy" | "offline" | "online";
+  role_id: number | string;
 }
 
 export interface AuthState {

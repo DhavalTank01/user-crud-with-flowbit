@@ -53,7 +53,6 @@ const Input = ({
         name={name}
         type={showPassword && type === "password" ? "text" : type}
         placeholder={placeholder}
-        required={required}
         onChange={onChange}
         onBlur={onBlur}
         onFocus={onFocus}

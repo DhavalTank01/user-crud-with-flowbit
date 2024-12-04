@@ -430,7 +430,7 @@ const Roles = () => {
             }}
             onReject={handleClose}
             modelDetails={modelDetails}
-            approveButtonText="Edit"
+            approveButtonText={modelDetails?.type === "add" ? "Add" : "Edit"}
             rejectButtonText="Cancel"
             isLoading={isLoading.addUser || isLoading.editUser}
             isError={!modelDetails?.role?.name}

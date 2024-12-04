@@ -21,8 +21,8 @@ const Login = () => {
     password: string;
   }
   const initialValues = {
-    email: "test1@yopmail.com",
-    password: "test@123",
+    email: "",
+    password: "",
   };
 
   const schema = Yup.object().shape({

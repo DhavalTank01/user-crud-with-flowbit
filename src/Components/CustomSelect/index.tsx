@@ -1,6 +1,7 @@
 import { Label, Select } from "flowbite-react";
 import React from "react";
 import { OptionsTypes } from "../../types";
+import { convertTextCase } from "../../utils";
 interface CustomSelectProps {
   name: string;
   id: string;
@@ -11,6 +12,10 @@ interface CustomSelectProps {
   disabled?: boolean;
   options?: OptionsTypes[];
   parentClassName?: string;
+  isAddEmptyOption?: boolean;
+  sizing?: string;
+  error?: boolean;
+  helperText?: string;
   [key: string]: any;
 }
 
@@ -25,6 +30,9 @@ const CustomSelect = ({
   options,
   parentClassName,
   sizing,
+  error,
+  helperText,
+  isAddEmptyOption,
   ...rest
 }: CustomSelectProps) => {
   return (
@@ -42,8 +50,15 @@ const CustomSelect = ({
         onBlur={onBlur}
         disabled={disabled}
         sizing={sizing}
+        helperText={convertTextCase(helperText, "errorMessage")}
+        color={error ? "failure" : undefined}
         {...rest}
       >
+        {isAddEmptyOption ? (
+          <option value={""} disabled>
+            Select
+          </option>
+        ) : null}
         {options?.map((option: OptionsTypes) => (
           <option
             key={option.value}

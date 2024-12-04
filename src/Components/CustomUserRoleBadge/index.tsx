@@ -9,11 +9,15 @@ const CustomUserRoleBadge = ({ user }: { user: User }) => {
     <Badge
       className="w-min"
       color={
-        user?.is_disabled ? "red" : user.role === "admin" ? "blue" : "gray"
+        user?.is_disabled
+          ? "red"
+          : user.role?.name === "Admin"
+            ? "blue"
+            : "gray"
       }
       icon={HiUser}
     >
-      {convertTextCase(user.role, "titlecase")}
+      {convertTextCase(user.role?.name, "titlecase")}
     </Badge>
   );
 };

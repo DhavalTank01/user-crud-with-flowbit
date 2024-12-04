@@ -29,10 +29,12 @@ import DebouncedSearch from "../../Components/DebouncedSearch";
 import CustomSelect from "../../Components/CustomSelect";
 import { USER_ROLES, USER_STATUS } from "../../constants";
 import { FcClearFilters } from "react-icons/fc";
+import { Role } from "../../types/Role";
 
 const Users = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([] as User[]);
+  const [roles, setRoles] = useState([] as Role[]);
   const [totalUsers, setTotalUsers] = useState(0);
   const currentUser = useAuth()?.getUserAndToken()?.user as User;
   const [isLoading, setIsLoading] = useState({
@@ -56,6 +58,22 @@ const Users = () => {
     filter_by: "",
     is_disabled: "",
   });
+
+  const getRolesList = async () => {
+    try {
+      const response = await axiosInstance.get(APIS.GET_ROLE_LIST);
+      if (response.status === 200) {
+        setRoles(response.data.roles);
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  useEffect(() => {
+    getRolesList();
+  }, []);
 
   // Fetch users whenever queryParams changes
   useEffect(() => {
@@ -224,7 +242,13 @@ const Users = () => {
               <CustomSelect
                 parentClassName="w-full"
                 value={queryParams?.role}
-                options={USER_ROLES}
+                options={[
+                  { value: "all", label: "All" },
+                  ...roles?.map((role) => ({
+                    value: role?.name,
+                    label: role?.name,
+                  })),
+                ]}
                 name="role"
                 id="role"
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {

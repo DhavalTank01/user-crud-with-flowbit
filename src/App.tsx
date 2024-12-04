@@ -113,7 +113,7 @@ const App = () => {
   const isHaveAccess = (path: string) => {
     if (!isAuthenticated()) return false;
     const user = getUserAndToken()?.user as User;
-    return user?.role === "client" ? CLIENT_PAGES.includes(path) : true;
+    return user?.role?.name === "client" ? CLIENT_PAGES.includes(path) : true;
   };
 
   return (

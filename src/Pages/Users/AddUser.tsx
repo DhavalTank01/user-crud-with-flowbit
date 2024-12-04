@@ -11,6 +11,9 @@ import CustomRadioGroup from "../../Components/CustomRadioGroup";
 import URLS from "../../Routes";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import CustomSelect from "../../Components/CustomSelect";
+import { Role } from "../../types/Role";
+import { useEffect, useState } from "react";
 
 const AddUser = () => {
   const navigate = useNavigate();
@@ -20,8 +23,10 @@ const AddUser = () => {
     phone_number: "",
     dob: "",
     email: "",
-    role: "client",
+    role_id: "",
   };
+
+  const [roles, setRoles] = useState([] as Role[]);
   const formik = useFormik({
     initialValues: initialValues,
     enableReinitialize: true,
@@ -31,6 +36,7 @@ const AddUser = () => {
       phone_number: Yup.string().min(10).max(13).required(),
       dob: Yup.string().required(),
       email: Yup.string().email().required(),
+      role_id: Yup.number().required("Role is required"),
     }),
     onSubmit: (values) => {
       addUser(values as User);
@@ -75,6 +81,22 @@ const AddUser = () => {
     navigate(URLS.Users);
   };
 
+  const getRolesList = async () => {
+    try {
+      const response = await axiosInstance.get(APIS.GET_ROLE_LIST);
+      if (response.status === 200) {
+        setRoles(response.data.roles);
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  useEffect(() => {
+    getRolesList();
+  }, []);
+
   return (
     <div>
       <CustomBreadcrumb
@@ -93,8 +115,12 @@ const AddUser = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.first_name}
-            error={!!formik.errors.first_name}
-            helperText={formik.errors.first_name}
+            error={!!formik.errors.first_name && formik.touched.first_name}
+            helperText={
+              formik.errors.first_name && formik.touched.first_name
+                ? formik.errors.first_name
+                : ""
+            }
           />
           <Input
             name="last_name"
@@ -105,8 +131,12 @@ const AddUser = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.last_name}
-            error={!!formik.errors.last_name}
-            helperText={formik.errors.last_name}
+            error={!!formik.errors.last_name && formik.touched.last_name}
+            helperText={
+              formik.errors.last_name && formik.touched.last_name
+                ? formik.errors.last_name
+                : ""
+            }
           />
           <Input
             name="email"
@@ -120,8 +150,12 @@ const AddUser = () => {
               checkUniqueEmail(formik.values.email);
             }}
             value={formik.values.email}
-            error={!!formik.errors.email}
-            helperText={formik.errors.email}
+            error={!!formik.errors.email && formik.touched.email}
+            helperText={
+              formik.errors.email && formik.touched.email
+                ? formik.errors.email
+                : ""
+            }
           />
           <Input
             name="phone_number"
@@ -132,8 +166,12 @@ const AddUser = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.phone_number}
-            error={!!formik.errors.phone_number}
-            helperText={formik.errors.phone_number}
+            error={!!formik.errors.phone_number && formik.touched.phone_number}
+            helperText={
+              formik.errors.phone_number && formik.touched.phone_number
+                ? formik.errors.phone_number
+                : ""
+            }
           />
           <SingleDatePicker
             label="Date of Birth"
@@ -145,17 +183,30 @@ const AddUser = () => {
             }}
             onBlur={formik.handleBlur}
             maxDate={new Date()}
-            error={!!formik.errors.dob}
-            helperText={formik.errors.dob}
+            error={!!formik.errors.dob && formik.touched.dob}
+            helperText={
+              formik.errors.dob && formik.touched.dob ? formik.errors.dob : ""
+            }
           />
-          <CustomRadioGroup
+          <CustomSelect
+            parentClassName="w-full"
+            value={formik.values.role_id}
+            options={roles?.map((role) => ({
+              value: role?.id,
+              label: role?.name,
+            }))}
             label="Role"
-            name="role"
-            items={["client", "admin"]}
-            value={formik.values.role}
+            name="role_id"
+            id="role_id"
             onChange={formik.handleChange}
-            error={!!formik.errors.role}
-            helperText={formik.errors.role}
+            onBlur={formik.handleBlur}
+            error={!!formik.errors.role_id && formik.touched.role_id}
+            helperText={
+              formik.errors.role_id && formik.touched.role_id
+                ? formik.errors.role_id
+                : ""
+            }
+            isAddEmptyOption={true}
           />
           <div className="flex justify-between align-middle">
             <CustomButton

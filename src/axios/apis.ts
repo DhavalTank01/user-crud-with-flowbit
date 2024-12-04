@@ -22,6 +22,7 @@ const APIS = {
 
   // Roles
   GET_ALL_ROLES: "/role", // GET
+  GET_ROLE_LIST: "/role/list", // GET
   CREATE_ROLE: "/role/add", // POST
   UPDATE_ROLE: (roleId: string | number) => `/role/${roleId}`, // PUT
   UPDATE_ROLE_ACTIVE_STATUS: (roleId: number) =>
