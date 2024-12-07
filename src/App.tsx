@@ -19,7 +19,7 @@ import { User } from "./types/User";
 import CustomSidebar from "./Components/Sidebar";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { login } from "./redux/slice/userSlice";
+import { login, logout } from "./redux/slice/userSlice";
 import axiosInstance from "./axios";
 import { APIS } from "./axios/apis";
 import { getCookie } from "./utils";
@@ -48,12 +48,33 @@ const App = () => {
             navigate(URLS.Dashboard);
           }
         }
+      } else {
+        checkUserSession();
       }
     } catch (error: any) {
       console.error(error);
       toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkUserSession = async () => {
+    try {
+      const response = await axiosInstance.get(APIS.GET_CURRENT_USER);
+      if (response?.status === 200) {
+        const user = response.data.user;
+        const token = response.data.user.token;
+        dispatch(login({ user, token }));
+      } else {
+        navigate(URLS.Login);
+        dispatch(logout());
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+      navigate(URLS.Login);
+      dispatch(logout());
     }
   };
 
