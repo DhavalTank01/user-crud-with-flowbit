@@ -13,10 +13,12 @@ interface CustomModelProps {
   approveButtonColor?: string;
   rejectButtonColor?: string;
   typeColorClass?: string;
+  children?: React.ReactNode;
   isLoading?: boolean;
+  isError?: boolean;
 }
 
-const ConfirmModel = ({
+const CustomModel = ({
   onClose,
   onApprove,
   onReject,
@@ -27,22 +29,24 @@ const ConfirmModel = ({
   approveButtonColor = "",
   rejectButtonColor = "light",
   typeColorClass = "",
+  children,
   isLoading = false,
+  isError = false,
 }: CustomModelProps) => {
   return (
     <Modal show={isShow} onClose={isLoading ? undefined : onClose}>
       <Modal.Header>
-        Are you want to{" "}
         <span className={classNames("font-bold", typeColorClass)}>
-          {modelDetails?.type}
+          {modelDetails?.title}
         </span>
-        ?
       </Modal.Header>
+      {children}
       <Modal.Footer>
         <CustomButton
           isLoading={isLoading}
           color={approveButtonColor}
           onClick={onApprove}
+          disabled={isError || isLoading}
         >
           {approveButtonText}
         </CustomButton>
@@ -58,4 +62,4 @@ const ConfirmModel = ({
   );
 };
 
-export default ConfirmModel;
+export default CustomModel;

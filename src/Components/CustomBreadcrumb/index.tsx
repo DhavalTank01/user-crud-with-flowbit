@@ -13,9 +13,9 @@ const CustomBreadcrumb = ({
 }) => {
   const navigate = useNavigate();
   const handlePageTitleClick = () => {
-    if (pageLink) {
-      navigate(pageLink);
-    }
+    // if (pageLink) {
+    //   navigate(pageLink);
+    // }
   };
   return (
     <Breadcrumb

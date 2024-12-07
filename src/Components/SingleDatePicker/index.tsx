@@ -42,6 +42,7 @@ const SingleDatePicker: React.FC<SingleDatePickerPropsTypes> = ({
         minDate={minDate}
         maxDate={maxDate}
         value={value}
+        color={error ? "failure" : undefined}
         {...rest}
       />
       {helperText && (

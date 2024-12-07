@@ -29,10 +29,12 @@ import DebouncedSearch from "../../Components/DebouncedSearch";
 import CustomSelect from "../../Components/CustomSelect";
 import { USER_ROLES, USER_STATUS } from "../../constants";
 import { FcClearFilters } from "react-icons/fc";
+import { Role } from "../../types/Role";
 
 const Users = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([] as User[]);
+  const [roles, setRoles] = useState([] as Role[]);
   const [totalUsers, setTotalUsers] = useState(0);
   const currentUser = useAuth()?.getUserAndToken()?.user as User;
   const [isLoading, setIsLoading] = useState({
@@ -56,6 +58,22 @@ const Users = () => {
     filter_by: "",
     is_disabled: "",
   });
+
+  const getRolesList = async () => {
+    try {
+      const response = await axiosInstance.get(APIS.GET_ROLE_LIST);
+      if (response.status === 200) {
+        setRoles(response.data.roles);
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  useEffect(() => {
+    getRolesList();
+  }, []);
 
   // Fetch users whenever queryParams changes
   useEffect(() => {
@@ -187,18 +205,33 @@ const Users = () => {
       role: "",
       is_disabled: "",
       page: 1,
+      search: "",
     });
   };
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <CustomBreadcrumb pageTitle="Users" />
       {isLoading.pageLoading ? (
         <PageLoader />
       ) : (
         <React.Fragment>
-          <div className="mb-4 flex items-center justify-between p-4 pb-0">
-            <div>Users ({totalUsers})</div>
+          <div className="sticky top-0 z-10 bg-white p-4">
+            <div className="flex items-center justify-between">
+              <div>Users ({totalUsers || 0})</div>
+              <CustomButton
+                type="button"
+                color="light"
+                onClick={() => {
+                  navigate(URLS.AddUser);
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <span>Add User</span>
+                  <HiUserAdd />
+                </div>
+              </CustomButton>
+            </div>
             <div className="flex items-end gap-2">
               <div className="w-full">
                 <DebouncedSearch
@@ -209,7 +242,13 @@ const Users = () => {
               <CustomSelect
                 parentClassName="w-full"
                 value={queryParams?.role}
-                options={USER_ROLES}
+                options={[
+                  { value: "all", label: "All" },
+                  ...roles?.map((role) => ({
+                    value: role?.name,
+                    label: role?.name,
+                  })),
+                ]}
                 name="role"
                 id="role"
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -241,7 +280,13 @@ const Users = () => {
               <CustomButton
                 type="button"
                 onClick={() => resetFilters()}
-                disabled={!queryParams?.role && !queryParams?.is_disabled}
+                disabled={
+                  (!queryParams?.role &&
+                    !queryParams?.is_disabled &&
+                    !queryParams?.search) ||
+                  queryParams?.role === "all" ||
+                  queryParams?.is_disabled === "all"
+                }
               >
                 <div className="flex items-center gap-2">
                   <span>Reset</span>
@@ -249,22 +294,10 @@ const Users = () => {
                 </div>
               </CustomButton>
             </div>
-            <CustomButton
-              type="button"
-              color="light"
-              onClick={() => {
-                navigate(URLS.AddUser);
-              }}
-            >
-              <div className="flex items-center gap-2">
-                <span>Add User</span>
-                <HiUserAdd />
-              </div>
-            </CustomButton>
           </div>
-          <div className="max-h-[500px] overflow-y-auto">
-            <Table className="data-table" hoverable>
-              <Table.Head>
+          <div className="relative max-h-[500px] overflow-auto">
+            <Table className="data-table">
+              <Table.Head className="sticky top-0 z-10 bg-white shadow-md">
                 <SortableHeader
                   label="User ID"
                   sortKey="id"
@@ -333,7 +366,7 @@ const Users = () => {
                     >
                       <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                         <Badge className="w-min" color="indigo">
-                          {generateUserId(user)}
+                          {generateUserId(user.id)}
                         </Badge>
                       </Table.Cell>
                       <Table.Cell>
@@ -420,6 +453,7 @@ const Users = () => {
             rejectButtonText="Cancel"
             typeColorClass="text-red-500"
             approveButtonColor="failure"
+            isLoading={isLoading.deleteUser}
           />
         </React.Fragment>
       )}

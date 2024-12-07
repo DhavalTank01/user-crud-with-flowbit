@@ -11,6 +11,8 @@ const URLS = {
   Users: "/users",
   AddUser: "/users/add",
   EditUser: "/users/edit",
+
+  Roles: "/roles",
 };
 
 export default URLS;

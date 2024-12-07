@@ -1,4 +1,5 @@
 import { HiChartPie, HiUser } from "react-icons/hi";
+import { CiCircleList } from "react-icons/ci";
 import URLS from "../Routes";
 
 const DEFAULT_SIDE_BAR = [
@@ -19,6 +20,11 @@ const ADMIN_SIDE_BAR = [
     name: "Users",
     path: URLS.Users,
     icon: HiUser,
+  },
+  {
+    name: "Roles",
+    path: URLS.Roles,
+    icon: CiCircleList,
   },
 ];
 

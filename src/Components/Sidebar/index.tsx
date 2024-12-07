@@ -11,8 +11,8 @@ const CustomSidebar = () => {
     return window.location.pathname === path;
   };
 
-  let role = currentUser?.role;
-  let isAdmin = role === "admin";
+  let role = currentUser?.role?.name;
+  let isAdmin = role === "Admin";
   let SIDEBAR = isAdmin ? ADMIN_SIDE_BAR : DEFAULT_SIDE_BAR;
 
   return (

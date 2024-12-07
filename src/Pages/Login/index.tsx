@@ -21,8 +21,8 @@ const Login = () => {
     password: string;
   }
   const initialValues = {
-    email: "test1@yopmail.com",
-    password: "test@123",
+    email: "",
+    password: "",
   };
 
   const schema = Yup.object().shape({
@@ -71,6 +71,14 @@ const Login = () => {
       <form
         className="flex w-[500px] flex-col gap-4"
         onSubmit={formik.handleSubmit}
+        onKeyDown={(event) => {
+          if (
+            event.key === "Enter" &&
+            (event.target as HTMLElement).tagName !== "BUTTON"
+          ) {
+            event.preventDefault();
+          }
+        }}
       >
         <div className="text-center text-xl">Login</div>
         <Input
