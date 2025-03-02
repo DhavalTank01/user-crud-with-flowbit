@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
   const initialValues = {
-    email: "test1@yopmail.com",
+    email: "",
   };
   const navigate = useNavigate();
 
@@ -59,8 +59,8 @@ const ForgotPassword = () => {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.email}
-          error={Boolean(formik.errors.email)}
-          helperText={formik.errors.email}
+          error={Boolean(formik.errors.email) && formik.touched.email}
+          helperText={!!formik.errors.email && formik.touched.email ? formik.errors.email : ""}
         />
         <CustomButton
           type="submit"

@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import CustomButton from "../../Components/Button";
 import CustomSelect from "../../Components/CustomSelect";
 import DebouncedSearch from "../../Components/DebouncedSearch";
-import { HiUserAdd } from "react-icons/hi";
+import { HiPlus } from "react-icons/hi";
 import CustomBreadcrumb from "../../Components/CustomBreadcrumb";
 import PageLoader from "../../Components/PageLoader";
 import { useNavigate } from "react-router-dom";
-import URLS from "../../Routes";
-import { USER_ROLES, USER_STATUS } from "../../constants";
+import { USER_STATUS } from "../../constants";
 import { FcClearFilters } from "react-icons/fc";
 import axiosInstance from "../../axios";
 import { APIS } from "../../axios/apis";
@@ -277,8 +276,8 @@ const Roles = () => {
                 }}
               >
                 <div className="flex items-center gap-2">
-                  <span>Add Role</span>
-                  <HiUserAdd />
+                  <span>Role</span>
+                  <HiPlus />
                 </div>
               </CustomButton>
             </div>

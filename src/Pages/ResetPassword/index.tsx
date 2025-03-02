@@ -11,9 +11,10 @@ import { useNavigate, useParams } from "react-router-dom";
 const ResetPassword = () => {
   const navigate = useNavigate();
   const { token } = useParams();
+  console.log('token :>> ', token);
   const initialValues = {
-    password: "test@123",
-    confirmPassword: "test@123",
+    password: "",
+    confirmPassword: "",
   };
 
   const schema = Yup.object().shape({
@@ -70,9 +71,9 @@ const ResetPassword = () => {
           placeholder="Password"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
+          helperText={!!formik.errors.password && formik.touched.password ? formik.errors.password : ""}
+          error={Boolean(formik.errors.password) && formik.touched.password}
           value={formik.values.password}
-          error={Boolean(formik.errors.password)}
-          helperText={formik.errors.password}
         />
         <Input
           type="password"
@@ -82,9 +83,9 @@ const ResetPassword = () => {
           placeholder="Confirm Password"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
+          helperText={!!formik.errors.confirmPassword && formik.touched.confirmPassword ? formik.errors.confirmPassword : ""}
+          error={Boolean(formik.errors.confirmPassword) && formik.touched.confirmPassword}
           value={formik.values.confirmPassword}
-          error={Boolean(formik.errors.confirmPassword)}
-          helperText={formik.errors.confirmPassword}
         />
         <CustomButton
           type="submit"

@@ -7,7 +7,6 @@ import SingleDatePicker from "../../Components/SingleDatePicker";
 import CustomButton from "../../Components/Button";
 import axiosInstance from "../../axios";
 import { APIS } from "../../axios/apis";
-import CustomRadioGroup from "../../Components/CustomRadioGroup";
 import URLS from "../../Routes";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -104,7 +103,7 @@ const AddUser = () => {
         pageLink={URLS.Users}
         pageSubTitle="Add User"
       />
-      <div className="w-80 p-4">
+      <div className="p-4 w-1/2">
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
           <Input
             name="first_name"

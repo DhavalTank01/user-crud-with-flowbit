@@ -22,12 +22,12 @@ import PageLoader from "../../Components/PageLoader";
 import CustomButton from "../../Components/Button";
 import URLS from "../../Routes";
 import { useNavigate } from "react-router-dom";
-import { HiUserAdd } from "react-icons/hi";
+import { HiPlus } from "react-icons/hi";
 import CustomUserRoleBadge from "../../Components/CustomUserRoleBadge";
 import SortableHeader from "../../Components/SortableHeader";
 import DebouncedSearch from "../../Components/DebouncedSearch";
 import CustomSelect from "../../Components/CustomSelect";
-import { USER_ROLES, USER_STATUS } from "../../constants";
+import { USER_STATUS } from "../../constants";
 import { FcClearFilters } from "react-icons/fc";
 import { Role } from "../../types/Role";
 
@@ -227,8 +227,8 @@ const Users = () => {
                 }}
               >
                 <div className="flex items-center gap-2">
-                  <span>Add User</span>
-                  <HiUserAdd />
+                  <span>User</span>
+                  <HiPlus />
                 </div>
               </CustomButton>
             </div>
